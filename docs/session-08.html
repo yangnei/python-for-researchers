@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 8 — Files, Libraries &amp; Research Data</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+</head>
+<body data-page="session-08">
+<header class="site"><div class="nav-inner"><a class="brand" href="index.html">Python<span class="py">·</span>for Researchers</a><nav class="nav-links"><a href="index.html">Home</a><a href="session-01.html" data-page="session-01" title="Running Python, Variables &amp; Types">S1</a><a href="session-02.html" data-page="session-02" title="The Dynamic-Typing Traps">S2 ⭐</a><a href="session-03.html" data-page="session-03" title="Conditionals &amp; Boolean Logic">S3</a><a href="session-04.html" data-page="session-04" title="Loops &amp; Iteration">S4</a><a href="session-05.html" data-page="session-05" title="Data Structures">S5</a><a href="session-06.html" data-page="session-06" title="Functions, Scope &amp; Reusability">S6</a><a href="session-07.html" data-page="session-07" title="Exceptions &amp; Defensive Code">S7</a><a href="session-08.html" class="active" data-page="session-08" title="Files, Libraries &amp; Research Data">S8</a><a href="session-09.html" data-page="session-09" title="Regex, Modules, OOP &amp; Pythonic">S9</a><a href="cheatsheets.html">Cheat sheets</a></nav></div></header>
+<main>
+
+<article>
+  <div id="lesson" class="md"></div>
+  <section id="playgrounds"></section>
+  <h2>Practice</h2>
+<div id="practice" class="md"></div>
+  <h2>Check yourself</h2>
+<div id="quiz" class="md"></div>
+  <div class="page-foot">
+    <button id="complete-btn" class="complete-btn" type="button">Mark this session complete</button>
+    <div class="foot-nav">
+      <a href="session-07.html">&larr; Prev</a>
+      <a href="session-09.html">Next &rarr;</a>
+    </div>
+  </div>
+</article>
+
+</main>
+<script type="text/markdown" id="lesson-md">
+# Session 8
+## Files, Libraries & Research Data
+
+The hour your actual data shows up.
+
+---
+
+## Opening files with `with`
+
+```python
+with open("notes.txt") as f:
+    text = f.read()
+# file auto-closes here, even if the code crashes
+```
+
+`with` = a context manager: sets up and tears down the resource for you.
+Always prefer it to a bare `open()`/`close()`.
+
+---
+
+## File modes (mind the trap)
+
+| Mode | Meaning |
+|---|---|
+| `"r"` | read (default) |
+| `"w"` | write — **truncates the file to empty first!** |
+| `"a"` | append |
+| `"r+"` | read + write |
+
+⚠️ Open the wrong file with `"w"` → its contents are gone.
+
+---
+
+## Reading text
+
+```python
+with open("notes.txt") as f:
+    whole = f.read()           # one big string
+    # or
+    for line in f:             # line by line (memory-friendly)
+        print(line.rstrip())
+```
+
+⚠️ A file object is exhausted after one pass — re-open to read again.
+
+---
+
+## CSV in, as dicts 🧠
+
+```python
+import csv
+with open("students.csv", newline="") as f:
+    for row in csv.DictReader(f):
+        print(row["name"], row["score"])   # row is a dict keyed by header
+```
+
+`csv.DictReader` turns each row into a dict — your "list of dicts" dataset from Session 5.
+(`newline=""` avoids blank rows on Windows.)
+
+---
+
+## CSV out
+
+```python
+with open("summary.csv", "w", newline="") as f:
+    w = csv.DictWriter(f, fieldnames=["name", "score"])
+    w.writeheader()
+    w.writerow({"name": "Ana", "score": 91})
+```
+
+---
+
+## Libraries a researcher reaches for
+
+```python
+import statistics
+statistics.mean(xs); statistics.median(xs); statistics.stdev(xs)
+
+import random
+random.choice(xs); random.randint(1, 6); random.shuffle(xs)
+
+from datetime import date
+date.today()
+
+from pathlib import Path
+Path("students.csv").exists()
+```
+
+`pip install <package>` for third-party libs.
+
+---
+
+## The pandas teaser (your next course)
+
+```python
+import pandas as pd
+df = pd.read_csv("students.csv")
+df["score"].describe()      # count, mean, std, min, quartiles, max
+df.groupby("major")["score"].mean()
+```
+
+Everything you did by hand today — in three lines.
+We learned the fundamentals *underneath* it first.
+
+---
+
+## Your turn
+
+`examples/session-08/practice.md` (uses `survey.csv`):
+1. Read `students.csv`; print class mean with `statistics.mean`.
+2. Compute per-item survey means; write `survey_summary.csv`.
+
+---
+
+## Traps recap
+
+- `"w"` silently overwrites — be sure of the filename.
+- `csv` module → open with `newline=""`.
+- Files exhaust after one read; re-open to re-read.
+- Specify `encoding="utf-8"` for non-ASCII text.
+
+## Summary
+You can load, summarize, and write real research data.
+**Next:** clean text with regex, organize with modules & classes, and finish "Pythonic."
+
+</script>
+<script type="text/markdown" id="practice-md">
+# Session 8 — Practice (25 min)
+
+Files provided: `students.csv`, `survey.csv`.
+
+## Task 1 — Read & summarize students
+Read `students.csv` with `csv.DictReader`. Remember the values are **strings** — convert
+`score` to `int`. Print the class mean and median with the `statistics` module.
+
+## Task 2 — Mean by major
+Build `{major: mean_score}`. (Hint: `dict.setdefault(key, []).append(...)`.)
+
+## Task 3 — Clean & summarize the survey
+`survey.csv` has `"N/A"` and blanks in numeric columns. For each `q*` item, compute the
+mean of the **valid** values only, and how many were valid. Write `survey_summary.csv`
+with columns `item,mean,n_valid`.
+
+## Task 4 — pandas teaser (optional)
+If `pandas` is installed: `pd.read_csv("students.csv")["score"].describe()`. Compare the
+mean to your hand-computed one.
+
+## Trap check
+What happens if you accidentally open `students.csv` with mode `"w"` before reading it?
+
+---
+
+<details><summary>Show solutions</summary>
+
+See `demo.py` in this folder — it implements Tasks 1–3 exactly. Key lines:
+
+```python
+scores = [int(s["score"]) for s in students]     # convert strings!
+statistics.mean(scores)                           # 75.5
+
+by_major = {}
+for s in students:
+    by_major.setdefault(s["major"], []).append(int(s["score"]))
+
+def to_int(x):
+    try: return int(x)
+    except (ValueError, TypeError): return None   # handles N/A and ""
+```
+
+Trap: opening with `"w"` **truncates the file to empty immediately** — your data is gone
+before you ever read it. Use `"r"` (the default) to read.
+
+
+</details>
+
+</script>
+<script type="text/markdown" id="quiz-md">
+### Quiz — Files & Data
+1. What does opening a file in `"w"` mode do to existing contents?
+2. Why prefer `with open(...)` over `open()`/`close()`?
+3. After `csv.DictReader`, what type is each row?
+4. CSV values read from a file are what type — and what must you do with numbers?
+
+<details><summary>Show answers</summary>
+
+**Answers:** 1. Truncates it to empty immediately. 2. `with` auto-closes the file even if the
+code crashes. 3. A `dict` keyed by the header row. 4. Strings; convert with `int()`/`float()`.
+
+</details>
+</script>
+<script type="application/json" id="playgrounds-data">[{"title": "read_csv_in_memory.py", "code": "import csv, statistics, io\n\n# A real CSV would be a file; here we read it from a string so it runs in-browser.\nDATA = \"\"\"name,major,score\nAna,Education,91\nBen,Psychology,58\nCara,Education,73\nDev,Sociology,64\nEve,Psychology,88\"\"\"\n\nrows = list(csv.DictReader(io.StringIO(DATA)))\nscores = [int(r[\"score\"]) for r in rows]      # CSV values are STRINGS \u2014 convert!\nprint(\"class mean:\", statistics.mean(scores))\n\nby_major = {}\nfor r in rows:\n    by_major.setdefault(r[\"major\"], []).append(int(r[\"score\"]))\nprint(\"by major:  \", {m: round(statistics.mean(v), 1) for m, v in by_major.items()})\n"}]</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

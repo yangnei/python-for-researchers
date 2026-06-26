@@ -1,0 +1,43 @@
+# Glossary — Plain-Language Definitions
+
+For a learner who knows research but not code. Each term: what it is, in one breath.
+
+- **Argument** — a value you hand to a function when you call it. `int("5")` — `"5"` is the argument.
+- **Parameter** — the named slot in a function definition that receives an argument. `def f(x):` — `x` is the parameter.
+- **Variable** — a *name* (label) pointing at an object. Not a box; a sticky note.
+- **Object** — any value Python stores: a number, string, list, function, even a type. "Everything is an object."
+- **Type** — the kind of an object: `int`, `float`, `str`, `bool`, `list`, `dict`, `set`, `tuple`, `NoneType`.
+- **Dynamic typing** — variables aren't locked to one type; the *object* has a type, the *name* doesn't.
+- **`int` / `float`** — whole number / decimal number. `/` always makes a float; `//` floors to int.
+- **`str`** — text. Immutable (can't change in place). Written in quotes.
+- **`bool`** — `True`/`False`. Technically a kind of `int` (`True == 1`).
+- **`None`** — "no value." Returned by functions that don't `return` anything. Test with `is None`.
+- **f-string** — `f"...{expr}..."` — a string with `{}` placeholders filled by Python.
+- **Equality (`==`)** — "same value?" The comparison you usually want.
+- **Identity (`is`)** — "literally the same object in memory?" Use only for `None`/`True`/`False`.
+- **Truthy / Falsy** — any value used in an `if` counts as true unless it's `0`, `""`, `[]`, `{}`, `set()`, or `None`.
+- **Mutable / Immutable** — can it be changed in place? `list`/`dict`/`set` yes; `int`/`str`/`tuple` no.
+- **Aliasing** — two names pointing at the *same* mutable object; changing one shows in the other.
+- **Slicing** — taking a sub-sequence: `xs[start:stop:step]`, stop excluded.
+- **Comprehension** — a one-line way to build a list/dict/set from a loop: `[x*2 for x in xs]`.
+- **Function** — a reusable named block of code; takes inputs, optionally `return`s an output.
+- **`return` vs `print`** — `return` hands a value back to the *caller*; `print` just shows text to the screen.
+- **Scope** — where a name is visible. Python looks Local → Enclosing → Global → Built-in (LEGB).
+- **`*args` / `**kwargs`** — collect "any number of" positional args (as a tuple) / keyword args (as a dict).
+- **Type hint** — optional annotation of expected types (`def f(x: int) -> str:`). Documentation, **not** enforced at runtime.
+- **Exception** — an error raised at runtime (e.g., `ValueError`). Handle with `try`/`except`.
+- **`raise`** — deliberately throw an exception. **EAFP** — "easier to ask forgiveness than permission": try it, catch failure.
+- **`assert`** — a developer sanity-check that errors if false. Not for validating user input (can be turned off).
+- **Module** — a `.py` file you can `import`. **Library / package** — a bundle of modules (install via `pip`).
+- **Standard library** — modules that ship with Python (`csv`, `statistics`, `random`, `re`, `json`, `datetime`, `pathlib`).
+- **Context manager (`with`)** — a block that sets up and tears down a resource automatically (e.g., closes a file).
+- **CSV** — comma-separated values; a plain-text table. `csv.DictReader` turns each row into a dict.
+- **Class / Object (OOP)** — a blueprint (`class`) and the things built from it (instances). Bundles data + behavior.
+- **`self`** — inside a class, "this particular instance."
+- **`__init__`** — the setup method run when you create an instance. **Dunder** = "double underscore" method.
+- **`@property`** — makes a method look like an attribute; lets you validate on get/set.
+- **Generator / `yield`** — produces values one at a time, lazily; saves memory on big data. Can be iterated once.
+- **`lambda`** — a tiny anonymous function, often used as a `key=` for sorting.
+- **Regex (regular expression)** — a pattern language for matching/extracting text (`re` module).
+- **Traceback** — the error report Python prints when something fails. **Read the last line first.**
+- **REPL** — the interactive `>>>` prompt where you type one line at a time.

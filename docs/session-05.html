@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 5 — Data Structures</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+</head>
+<body data-page="session-05">
+<header class="site"><div class="nav-inner"><a class="brand" href="index.html">Python<span class="py">·</span>for Researchers</a><nav class="nav-links"><a href="index.html">Home</a><a href="session-01.html" data-page="session-01" title="Running Python, Variables &amp; Types">S1</a><a href="session-02.html" data-page="session-02" title="The Dynamic-Typing Traps">S2 ⭐</a><a href="session-03.html" data-page="session-03" title="Conditionals &amp; Boolean Logic">S3</a><a href="session-04.html" data-page="session-04" title="Loops &amp; Iteration">S4</a><a href="session-05.html" class="active" data-page="session-05" title="Data Structures">S5</a><a href="session-06.html" data-page="session-06" title="Functions, Scope &amp; Reusability">S6</a><a href="session-07.html" data-page="session-07" title="Exceptions &amp; Defensive Code">S7</a><a href="session-08.html" data-page="session-08" title="Files, Libraries &amp; Research Data">S8</a><a href="session-09.html" data-page="session-09" title="Regex, Modules, OOP &amp; Pythonic">S9</a><a href="cheatsheets.html">Cheat sheets</a></nav></div></header>
+<main>
+
+<article>
+  <div id="lesson" class="md"></div>
+  <section id="playgrounds"></section>
+  <h2>Practice</h2>
+<div id="practice" class="md"></div>
+  <h2>Check yourself</h2>
+<div id="quiz" class="md"></div>
+  <div class="page-foot">
+    <button id="complete-btn" class="complete-btn" type="button">Mark this session complete</button>
+    <div class="foot-nav">
+      <a href="session-04.html">&larr; Prev</a>
+      <a href="session-06.html">Next &rarr;</a>
+    </div>
+  </div>
+</article>
+
+</main>
+<script type="text/markdown" id="lesson-md">
+# Session 5
+## Data Structures: list · tuple · dict · set
+
+The containers that hold your data.
+
+---
+
+## Four containers, four jobs
+
+| Type | Syntax | Mutable? | Use for |
+|---|---|---|---|
+| `list` | `[1, 2, 3]` | yes | ordered, changing collection |
+| `tuple` | `(1, 2)` | no | fixed record / coordinates |
+| `dict` | `{"k": v}` | yes | key → value lookup |
+| `set` | `{1, 2, 3}` | yes | unique items |
+
+---
+
+## Lists & slicing
+
+```python
+xs = [10, 20, 30, 40]
+xs[0]      # 10     xs[-1]   # 40 (last)
+xs[1:3]    # [20, 30]   (stop excluded)
+xs[:2]     # [10, 20]
+xs[::-1]   # reversed
+xs.append(50); xs.sort()      # mutate in place
+```
+
+⚠️ `xs.sort()` returns **None** — it sorts in place. Use `sorted(xs)` for a new list.
+
+---
+
+## Dicts = labeled records
+
+```python
+student = {"name": "Ana", "gpa": 3.9}
+student["name"]              # "Ana"
+student.get("major", "N/A")  # safe access with default
+student["major"] = "Ed"      # add/update
+for key, val in student.items(): ...
+```
+
+---
+
+## A list of dicts = a dataset 🧠
+
+```python
+roster = [
+    {"name": "Ana", "score": 91},
+    {"name": "Ben", "score": 58},
+]
+```
+
+Each dict = a **row/respondent**; each key = a **variable/column**.
+This is your tidy dataset until pandas shows up (Session 8).
+
+---
+
+## Sets: unique, fast membership
+
+```python
+answers = ["yes", "no", "yes", "maybe", "no"]
+set(answers)            # {'yes', 'no', 'maybe'}  — dedup
+"yes" in set(answers)   # True, very fast
+```
+
+Great for "distinct responses" and "have I seen this ID?"
+
+---
+
+## Comprehensions
+
+```python
+[s["score"] for s in roster]                 # list
+[s for s in roster if s["score"] >= 60]      # with filter
+{s["name"]: s["score"] for s in roster}      # dict
+{s["score"] // 10 for s in roster}           # set of score-decades
+```
+
+Read as: *expr, for each item, (optionally) if condition.*
+
+---
+
+## Sorting with a key
+
+```python
+sorted(roster, key=lambda s: s["score"])               # ascending
+sorted(roster, key=lambda s: s["score"], reverse=True) # descending
+```
+
+`lambda s: s["score"]` = "sort by the score field."
+
+---
+
+## TRAP: aliasing (labels, not boxes)
+
+```python
+a = [1, 2, 3]
+b = a                # SAME list
+a.append(4)
+b                    # [1, 2, 3, 4]  😱
+
+b = a.copy()         # ✅ independent copy
+```
+
+`[[0]*3]*3` makes 3 references to ONE row — use `[[0]*3 for _ in range(3)]`.
+
+---
+
+## Your turn
+
+`examples/session-05/practice.md`:
+1. Build the roster (list of dicts); sort by score.
+2. `{name: score}` dict comprehension.
+3. Group students into pass/fail buckets.
+4. Demonstrate the aliasing trap and fix it.
+
+---
+
+## Traps recap
+
+- `=` aliases; use `.copy()` / `copy.deepcopy()`.
+- `.sort()` returns None (in place); `sorted()` returns new.
+- list ≠ tuple even with same contents (Session 2).
+- `dict.get(key, default)` avoids `KeyError`.
+
+## Summary
+You can store, look up, dedup, sort, and reshape data.
+**Next:** package logic into reusable functions.
+
+</script>
+<script type="text/markdown" id="practice-md">
+# Session 5 — Practice (25 min)
+
+Start from:
+```python
+roster = [
+    {"name": "Ana", "score": 91}, {"name": "Ben", "score": 58},
+    {"name": "Cara", "score": 73}, {"name": "Dev", "score": 64},
+]
+```
+
+## Task 1 — Rank
+Print names sorted by score, highest first.
+
+## Task 2 — Map (dict comprehension)
+Build `{name: score}` in one line.
+
+## Task 3 — Group
+Build `{"pass": [...names...], "fail": [...names...]}` using a loop.
+
+## Task 4 — Dedup
+From `["A","B","A","C","B"]`, get the distinct values and how many there are.
+
+## Task 5 — Aliasing
+Show that `b = roster` then `roster.append({...})` also changes `b`. Then make `b` an
+independent copy so it doesn't. (Hint: nested dicts → `copy.deepcopy`.)
+
+---
+
+<details><summary>Show solutions</summary>
+
+```python
+# 1
+print([s["name"] for s in sorted(roster, key=lambda s: s["score"], reverse=True)])
+# ['Ana', 'Cara', 'Dev', 'Ben']
+
+# 2
+name_to_score = {s["name"]: s["score"] for s in roster}
+
+# 3
+groups = {"pass": [], "fail": []}
+for s in roster:
+    groups["pass" if s["score"] >= 60 else "fail"].append(s["name"])
+
+# 4
+vals = ["A","B","A","C","B"]
+distinct = set(vals); print(distinct, len(distinct))   # {'A','B','C'} 3
+
+# 5
+import copy
+b = roster                       # alias
+roster.append({"name": "Eve", "score": 80})
+# b now also has Eve. To stay independent:
+b = copy.deepcopy(roster)        # changes to roster no longer touch b
+```
+
+
+</details>
+
+</script>
+<script type="text/markdown" id="quiz-md">
+### Quiz — Data Structures
+1. Which are mutable: list, tuple, dict, set?
+2. What does `xs.sort()` return? How do you get a *new* sorted list?
+3. `a = [1,2]; b = a; a.append(3)` — what is `b`? Why?
+4. (Practical) One-line dict comprehension mapping each name in `names` to `0`.
+
+<details><summary>Show answers</summary>
+
+**Answers:** 1. list, dict, set are mutable; tuple is not. 2. `None` (sorts in place);
+`sorted(xs)`. 3. `[1, 2, 3]` — `b` is an alias for the same list. 4. `{n: 0 for n in names}`.
+
+</details>
+</script>
+<script type="application/json" id="playgrounds-data">[{"title": "structures_and_aliasing.py", "code": "roster = [{\"name\": \"Ana\", \"score\": 91},\n          {\"name\": \"Ben\", \"score\": 58},\n          {\"name\": \"Cara\", \"score\": 73}]\n\nranked = sorted(roster, key=lambda s: s[\"score\"], reverse=True)\nprint(\"ranked:\", [s[\"name\"] for s in ranked])\nprint(\"map:   \", {s[\"name\"]: s[\"score\"] for s in roster})   # dict comprehension\n\n# Aliasing: assignment does NOT copy.\na = [1, 2, 3]; b = a; a.append(4)\nprint(\"alias b:\", b)        # [1, 2, 3, 4]\nc = a.copy(); a.append(5)\nprint(\"copy  c:\", c)        # unaffected\n"}]</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

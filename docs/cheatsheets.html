@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cheat Sheets — Python for Researchers</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+</head>
+<body>
+<header class="site"><div class="nav-inner"><a class="brand" href="index.html">Python<span class="py">·</span>for Researchers</a><nav class="nav-links"><a href="index.html">Home</a><a href="session-01.html" data-page="session-01" title="Running Python, Variables &amp; Types">S1</a><a href="session-02.html" data-page="session-02" title="The Dynamic-Typing Traps">S2 ⭐</a><a href="session-03.html" data-page="session-03" title="Conditionals &amp; Boolean Logic">S3</a><a href="session-04.html" data-page="session-04" title="Loops &amp; Iteration">S4</a><a href="session-05.html" data-page="session-05" title="Data Structures">S5</a><a href="session-06.html" data-page="session-06" title="Functions, Scope &amp; Reusability">S6</a><a href="session-07.html" data-page="session-07" title="Exceptions &amp; Defensive Code">S7</a><a href="session-08.html" data-page="session-08" title="Files, Libraries &amp; Research Data">S8</a><a href="session-09.html" data-page="session-09" title="Regex, Modules, OOP &amp; Pythonic">S9</a><a href="cheatsheets.html" class="active">Cheat sheets</a></nav></div></header>
+<main>
+<div id="cheats" class="md"></div>
+</main>
+<script type="text/markdown" id="cheats-md">
+# Cheat Sheets
+
+Jump to: [Traps &amp; Gotchas](#python-traps--gotchas--the-master-cheat-sheet) · [Quick Reference](#python-quick-reference--syntax-youll-forget) · [Glossary](#glossary--plain-language-definitions)
+
+<a id="traps"></a>
+
+# Python Traps & Gotchas — The Master Cheat Sheet
+
+> The quirks that bite beginners (and plenty of experts). Every behavior below was run and
+> verified on CPython 3.11+. Read the **Surprise** column, cover the **Why/Fix**, and predict.
+> Keep this open for the whole course.
+
+---
+
+## 1 — Equality `==` vs Identity `is`  *(Session 2)*
+
+| Expression | Result | |
+|---|---|---|
+| `a = [1,2]; b = [1,2]; a == b` | `True` | same **value** |
+| `a = [1,2]; b = [1,2]; a is b` | `False` | different **objects** in memory |
+| `a = [1,2]; b = a; a is b` | `True` | `b` is the *same* object (an alias) |
+
+- **`==`** asks "same value?" — this is what you almost always want.
+- **`is`** asks "same object?" — use it **only** for `None`, `True`, `False`:
+  ```python
+  if x is None:        # ✅ correct
+  if x == None:        # ⚠️ works, but not idiomatic — use `is`
+  ```
+- **Identity wrinkle (do NOT rely on this):** CPython caches small integers (−5 to 256) and
+  interns some strings, so `a = 256; b = 256; a is b` is `True` but at `257` it may be `False`.
+  This is an implementation detail. **For value, always use `==`.**
+
+🧠 *Bridge:* two students with the same GPA are `==`; the same student is `is`.
+
+---
+
+## 2 — Booleans ARE integers  *(Session 2)*
+
+```python
+True == 1            # True   (bool is a subclass of int)
+False == 0           # True
+5 + True             # 6      yes, you can do arithmetic on bools
+sum([True, False, True])   # 2   ← counts the Trues
+isinstance(True, int)      # True
+type(True) is int          # False  (its type is bool, a subtype)
+```
+- **Fix / use it well:** `sum(conditions)` is the Pythonic way to *count* how many are true.
+- **Trap:** `True is 1` is `False` (different objects) even though `True == 1`. Compare with `==`.
+
+🧠 *Bridge:* this is dummy coding (1/0) built into the language — summing flags counts cases.
+
+---
+
+## 3 — Float precision  *(Session 2)*
+
+```python
+0.1 + 0.2            # 0.30000000000000004
+0.1 + 0.2 == 0.3     # False  😱
+```
+- **Why:** decimals are stored in binary; most can't be represented exactly. Not a Python bug — every language does this.
+- **Fix:**
+  ```python
+  import math
+  math.isclose(0.1 + 0.2, 0.3)     # True   ← compare floats with a tolerance
+  round(0.1 + 0.2, 2) == 0.3       # True   ← or round for display/compare
+  from decimal import Decimal       # exact decimal arithmetic when you truly need it (money, grades)
+  Decimal("0.1") + Decimal("0.2")  # Decimal('0.3')
+  ```
+- **Rule:** never test computed floats with `==`. Use `math.isclose` (or `round`).
+
+🧠 *Bridge:* you already never test two measured scores for exact equality — same instinct, new cause (binary storage, not measurement error).
+
+---
+
+## 4 — Comparing across types  *(Session 2)*
+
+```python
+5 == "5"     # False   (different types → not equal, but NO error)
+5 == 5.0     # True    (int vs float compare by numeric value)
+5 > "5"      # 💥 TypeError: '>' not supported between 'int' and 'str'
+```
+- **Equality (`==`/`!=`)** across unrelated types → just `False`, never crashes.
+- **Ordering (`<`,`>`,`<=`,`>=`)** across incompatible types → **`TypeError`**.
+- **Fix:** convert first. `int("5") == 5` → `True`. Guard with `isinstance` before ordering.
+
+🧠 *Bridge:* the computer can equate "are these the same?" across types, but can't *rank* text against numbers — it has no shared scale.
+
+---
+
+## 5 — Sequences compare element-by-element  *(Session 2 / 5)*
+
+```python
+[1, 2] == [1, 2]     # True
+[1, 2] == (1, 2)     # False   ← list vs tuple: different types, never equal
+(1, 2) < (1, 3)      # True    ← compares position by position (lexicographic)
+"apple" < "banana"   # True    ← strings compare char by char (alphabetical-ish)
+[1, 2] < [1, 2, 3]   # True    ← prefix is "less than"
+```
+- **Trap:** a `list` and a `tuple` with identical contents are **never `==`** — type matters.
+- Lists/tuples/strings compare left-to-right; the first differing element decides.
+
+---
+
+## 6 — Truthiness (what counts as False)  *(Session 2 / 3)*
+
+```python
+# These are all "falsy":
+bool(0) bool(0.0) bool("") bool([]) bool({}) bool(set()) bool(None)   # all False
+bool("0")   # True!  ← a non-empty string is truthy, even "0"
+bool([0])   # True   ← a non-empty list is truthy, even if it holds a 0
+```
+- **Fix / idiom:** check emptiness directly — `if scores:` not `if len(scores) > 0:`; `if name:` not `if name != "":`.
+- **Trap:** `"0"` (string) and `"False"` (string) are **truthy**. Convert user input before testing.
+
+---
+
+## 7 — `and` / `or` return an operand, not a bool  *(Session 3)*
+
+```python
+5 and 0      # 0      (and → first falsy, or last value)
+0 or "hi"    # "hi"   (or → first truthy, or last value)
+"" or "N/A"  # "N/A"  ← handy default-value idiom
+```
+- **Use it well:** `name = user_input or "Anonymous"` supplies a default.
+- **Trap:** don't write `if x == True`. Just `if x:`. And `and`/`or` short-circuit — the right
+  side may never run, so don't hide side effects there.
+
+---
+
+## 8 — Mutable default arguments  *(Session 6)* — the famous one
+
+```python
+def add_student(name, roster=[]):     # ❌ DANGER
+    roster.append(name)
+    return roster
+
+add_student("Ana")     # ['Ana']
+add_student("Ben")     # ['Ana', 'Ben']  😱  the default list PERSISTS across calls
+```
+- **Why:** the default `[]` is created **once**, when the function is *defined*, and reused every call.
+- **Fix:**
+  ```python
+  def add_student(name, roster=None):   # ✅
+      if roster is None:
+          roster = []
+      roster.append(name)
+      return roster
+  ```
+- **Rule:** never use a mutable default (`[]`, `{}`, `set()`). Use `None` and create inside.
+
+---
+
+## 9 — Aliasing: variables are labels, not boxes  *(Session 5)*
+
+```python
+a = [1, 2, 3]
+b = a            # b is the SAME list, not a copy
+a.append(4)
+b                # [1, 2, 3, 4]  😱  b changed too
+
+b = a.copy()     # ✅ now b is an independent (shallow) copy
+import copy
+b = copy.deepcopy(a)   # ✅ independent even for nested lists/dicts
+```
+- **Trap:** `grid = [[0] * 3] * 3` makes **three references to one row** — editing `grid[0][0]` changes all rows. Use `[[0]*3 for _ in range(3)]`.
+- **Rule:** assignment never copies. `=` binds another name to the same object.
+
+🧠 *Bridge:* a variable is a sticky label on an object, not a container holding a value.
+
+---
+
+## 10 — `type()` vs `isinstance()`  *(Session 2 / 9)*
+
+```python
+isinstance(x, int)              # ✅ Pythonic; respects inheritance
+isinstance(x, (int, float))     # ✅ "is x any kind of number?"
+type(x) is int                  # exact type only; rarely what you want
+type(x) == int                  # works but use `is` for type identity
+```
+- **Trap:** `isinstance(True, int)` is `True` (bool is a subtype of int). If you must exclude bools,
+  check `type(x) is int` or `isinstance(x, int) and not isinstance(x, bool)`.
+
+---
+
+## 11 — Integer vs float division  *(Session 1 / 2)*
+
+```python
+7 / 2      # 3.5   true division ALWAYS returns a float
+7 // 2     # 3     floor division (rounds toward −∞)
+-7 // 2    # -4    ← floors, doesn't truncate toward zero!
+7 % 2      # 1     modulo (remainder) — use % 2 to test even/odd
+7 / 0      # 💥 ZeroDivisionError
+```
+- **Trap:** `/` gives a float even when the result is whole (`4 / 2` is `2.0`). Use `//` for integer results.
+
+---
+
+## 12 — Strings are immutable; some methods *return*, don't mutate  *(Session 1 / 9)*
+
+```python
+s = "  Hello  "
+s.strip()          # "Hello"   ← returns a NEW string
+s                  # "  Hello  "  ← s is UNCHANGED
+s = s.strip()      # ✅ reassign to keep the result
+```
+- **Trap:** `s.strip()` / `s.replace(...)` / `s.upper()` do nothing to `s` unless you reassign.
+- Contrast: list methods like `.append()`/`.sort()` mutate **in place** and return `None`:
+  ```python
+  nums = [3, 1, 2]
+  nums = nums.sort()    # ❌ now nums is None!  .sort() returns None
+  nums.sort()           # ✅ sorts in place; use sorted(nums) to get a new list
+  ```
+
+---
+
+## 13 — `range` excludes the stop; off-by-one  *(Session 4)*
+
+```python
+list(range(1, 5))      # [1, 2, 3, 4]   ← 5 is NOT included
+list(range(5))         # [0, 1, 2, 3, 4]
+list(range(0, 10, 2))  # [0, 2, 4, 6, 8]
+```
+- **Rule:** `range(a, b)` is the half-open interval `[a, b)`.
+
+---
+
+## 14 — Modifying a list while iterating it  *(Session 4)*
+
+```python
+xs = [1, 2, 3, 4]
+for x in xs:
+    if x % 2 == 0:
+        xs.remove(x)     # ❌ skips elements / unpredictable
+# ✅ iterate a copy, or build a new list:
+xs = [x for x in xs if x % 2 != 0]
+```
+
+---
+
+## 15 — Files: `"w"` overwrites; cursor exhausts  *(Session 8)*
+
+```python
+open("data.csv", "w")    # ❗ TRUNCATES the file to empty immediately
+open("data.csv", "a")    # append
+open("data.csv", "r")    # read (default)
+
+with open("data.csv") as f:
+    rows = f.readlines()      # read once
+    again = f.readlines()     # [] — cursor is at end of file now
+```
+- Always prefer `with open(...) as f:` — it closes the file even if the code crashes.
+- With the `csv` module on Windows, open with `newline=""` to avoid blank rows.
+
+---
+
+## 16 — Regex: `.` matches *anything*; use raw strings  *(Session 9)*
+
+```python
+import re
+re.search(r"\d+", "id 42")     # use r"..." so \d isn't a Python escape
+re.search(".", "a.b")          # the "." matches "a", not just the dot!
+re.search(r"\.", "a.b")        # use \. for a literal dot
+```
+- **Rule:** always write patterns as raw strings `r"..."`. Escape `. ^ $ * + ? ( ) [ ] { } | \`.
+
+---
+
+## Quick "predict-then-run" self-test (cover the answers)
+```python
+print(True + True)            # 2
+print(3 == 3.0)               # True
+print(0.1 + 0.2 == 0.3)       # False
+print(5 == "5")               # False
+print([1,2] == (1,2))         # False
+print(bool("0"))              # True
+print(7 // 2, -7 // 2)        # 3 -4
+x = [1]; y = x; x.append(2); print(y)   # [1, 2]
+```
+If you can explain *why* for all eight, you've got the fundamentals most beginners miss.
+
+
+---
+
+<a id="quick-reference"></a>
+
+# Python Quick Reference — Syntax You'll Forget
+
+> The "how do I write that again?" sheet. Grouped by session.
+
+## I/O & types  *(S1)*
+```python
+name = input("Name: ")          # ALWAYS returns a str
+age  = int(input("Age: "))      # convert immediately
+print("Hi", name, age)          # space-separated
+print(f"Hi {name}, age {age}")  # f-string (preferred)
+print(f"{score:.2f}")           # 2 decimals
+print(f"{count:,}")             # thousands separator: 1,234
+print("no newline", end="")     # suppress the trailing \n
+int("42"), float("3.14"), str(42), bool(0)   # casts
+type(x)                          # what type is x?
+```
+
+## f-string formatting mini-table
+| Spec | Example | Output |
+|---|---|---|
+| `:.2f` | `f"{3.14159:.2f}"` | `3.14` |
+| `:,` | `f"{1234567:,}"` | `1,234,567` |
+| `:>8` | `f"{'hi':>8}"` | `      hi` (right-align) |
+| `:<8` | `f"{'hi':<8}"` | `hi      ` (left-align) |
+| `:^8` | `f"{'hi':^8}"` | `   hi   ` (center) |
+| `:.1%` | `f"{0.873:.1%}"` | `87.3%` |
+
+## Conditionals  *(S3)*
+```python
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+else:
+    grade = "F"
+
+90 <= score <= 100              # chained comparison
+grade = "pass" if score >= 60 else "fail"   # ternary
+
+match command:                   # Python 3.10+
+    case "start": ...
+    case "stop" | "halt": ...    # multiple values
+    case _: ...                  # default
+```
+
+## Loops  *(S4)*
+```python
+for i in range(5): ...                  # 0..4
+for x in items: ...                     # each element
+for i, x in enumerate(items): ...       # index + element
+for a, b in zip(names, scores): ...     # walk two lists together
+while condition: ...
+while True:                             # validation loop
+    x = input("...")
+    if valid(x):
+        break
+# break / continue control flow
+```
+
+## Sequences & slicing  *(S5)*
+```python
+xs = [1, 2, 3]; xs.append(4); xs[0]; xs[-1]   # last
+xs[1:3]      # [2, 3]   (start inclusive, stop exclusive)
+xs[:2]       # first two
+xs[::-1]     # reversed
+t = (1, 2)                       # tuple (immutable)
+d = {"name": "Ana", "gpa": 3.9}  # dict
+d["name"]; d.get("missing", 0)   # access; safe access w/ default
+d.keys(); d.values(); d.items()
+s = {1, 2, 2, 3}                 # set -> {1, 2, 3}  (unique)
+```
+
+## Comprehensions  *(S5/S9)*
+```python
+[x*2 for x in xs]                       # list
+[x for x in xs if x > 0]                # with filter
+{name: 0 for name in names}             # dict
+{x % 3 for x in xs}                     # set
+(x*x for x in xs)                       # generator (lazy)
+```
+
+## Sorting  *(S5)*
+```python
+sorted(xs)                              # new sorted list
+sorted(xs, reverse=True)
+sorted(students, key=lambda s: s["gpa"])          # by a field
+sorted(students, key=lambda s: s["gpa"], reverse=True)
+xs.sort()                               # in place (returns None!)
+```
+
+## Functions  *(S6)*
+```python
+def avg(nums: list[float]) -> float:
+    """Return the mean of nums."""      # docstring
+    return sum(nums) / len(nums)
+
+def greet(name, greeting="Hello"): ...  # default arg (NOT mutable!)
+def total(*args): ...                   # any number of positionals -> tuple
+def config(**kwargs): ...               # any number of keywords -> dict
+func(*my_list)                          # unpack list into args
+func(**my_dict)                         # unpack dict into kwargs
+```
+
+## Exceptions  *(S7)*
+```python
+try:
+    n = int(value)
+except ValueError:
+    n = None
+except (KeyError, IndexError) as e:
+    print(e)
+else:
+    print("ok")          # ran only if no exception
+finally:
+    print("always")      # cleanup, always runs
+
+raise ValueError("score must be 1–5")
+assert n > 0, "n must be positive"
+```
+
+## Files & CSV  *(S8)*
+```python
+with open("f.txt") as f:          # read, auto-closes
+    text = f.read()
+with open("f.txt", "w") as f:     # write (OVERWRITES)
+    f.write("line\n")
+
+import csv
+with open("data.csv", newline="") as f:
+    for row in csv.DictReader(f):    # row is a dict keyed by header
+        print(row["name"])
+
+with open("out.csv", "w", newline="") as f:
+    w = csv.DictWriter(f, fieldnames=["name", "gpa"])
+    w.writeheader()
+    w.writerow({"name": "Ana", "gpa": 3.9})
+```
+
+## Handy stdlib  *(S8)*
+```python
+import statistics; statistics.mean(xs); statistics.median(xs); statistics.stdev(xs)
+import random; random.choice(xs); random.randint(1, 6); random.shuffle(xs)
+from datetime import date; date.today(); date(2026, 6, 26)
+from pathlib import Path; Path("data.csv").exists()
+import json; json.dumps(obj, indent=2); json.loads(text)
+```
+
+## Regex  *(S9)*
+```python
+import re
+re.search(r"pattern", text)      # first match anywhere (or None)
+re.fullmatch(r"\d{5}", zip)      # whole string must match
+re.sub(r"\s+", " ", text)        # collapse whitespace
+m = re.search(r"(\w+)@(\w+)", s)
+m.group(1)                        # first capture group
+```
+| Token | Means |
+|---|---|
+| `.` | any char (except newline) |
+| `\d \w \s` | digit / word-char / whitespace |
+| `+ * ?` | 1+, 0+, 0-or-1 |
+| `{m,n}` | between m and n |
+| `^ $` | start / end |
+| `[...] [^...]` | set / not-in-set |
+| `(...)` | capture group |
+| `a\|b` | a or b |
+
+## Classes  *(S9)*
+```python
+class Student:
+    def __init__(self, name, gpa):
+        self.name = name
+        self._gpa = gpa
+    def __str__(self):
+        return f"{self.name} ({self._gpa})"
+    @property
+    def gpa(self):
+        return self._gpa
+    @gpa.setter
+    def gpa(self, value):
+        if not 0 <= value <= 4:
+            raise ValueError("gpa out of range")
+        self._gpa = value
+
+s = Student("Ana", 3.9)
+print(s)            # uses __str__
+```
+
+## The program skeleton  *(every script)*
+```python
+def main():
+    ...
+
+def helper():
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+
+---
+
+<a id="glossary"></a>
+
+# Glossary — Plain-Language Definitions
+
+For a learner who knows research but not code. Each term: what it is, in one breath.
+
+- **Argument** — a value you hand to a function when you call it. `int("5")` — `"5"` is the argument.
+- **Parameter** — the named slot in a function definition that receives an argument. `def f(x):` — `x` is the parameter.
+- **Variable** — a *name* (label) pointing at an object. Not a box; a sticky note.
+- **Object** — any value Python stores: a number, string, list, function, even a type. "Everything is an object."
+- **Type** — the kind of an object: `int`, `float`, `str`, `bool`, `list`, `dict`, `set`, `tuple`, `NoneType`.
+- **Dynamic typing** — variables aren't locked to one type; the *object* has a type, the *name* doesn't.
+- **`int` / `float`** — whole number / decimal number. `/` always makes a float; `//` floors to int.
+- **`str`** — text. Immutable (can't change in place). Written in quotes.
+- **`bool`** — `True`/`False`. Technically a kind of `int` (`True == 1`).
+- **`None`** — "no value." Returned by functions that don't `return` anything. Test with `is None`.
+- **f-string** — `f"...{expr}..."` — a string with `{}` placeholders filled by Python.
+- **Equality (`==`)** — "same value?" The comparison you usually want.
+- **Identity (`is`)** — "literally the same object in memory?" Use only for `None`/`True`/`False`.
+- **Truthy / Falsy** — any value used in an `if` counts as true unless it's `0`, `""`, `[]`, `{}`, `set()`, or `None`.
+- **Mutable / Immutable** — can it be changed in place? `list`/`dict`/`set` yes; `int`/`str`/`tuple` no.
+- **Aliasing** — two names pointing at the *same* mutable object; changing one shows in the other.
+- **Slicing** — taking a sub-sequence: `xs[start:stop:step]`, stop excluded.
+- **Comprehension** — a one-line way to build a list/dict/set from a loop: `[x*2 for x in xs]`.
+- **Function** — a reusable named block of code; takes inputs, optionally `return`s an output.
+- **`return` vs `print`** — `return` hands a value back to the *caller*; `print` just shows text to the screen.
+- **Scope** — where a name is visible. Python looks Local → Enclosing → Global → Built-in (LEGB).
+- **`*args` / `**kwargs`** — collect "any number of" positional args (as a tuple) / keyword args (as a dict).
+- **Type hint** — optional annotation of expected types (`def f(x: int) -> str:`). Documentation, **not** enforced at runtime.
+- **Exception** — an error raised at runtime (e.g., `ValueError`). Handle with `try`/`except`.
+- **`raise`** — deliberately throw an exception. **EAFP** — "easier to ask forgiveness than permission": try it, catch failure.
+- **`assert`** — a developer sanity-check that errors if false. Not for validating user input (can be turned off).
+- **Module** — a `.py` file you can `import`. **Library / package** — a bundle of modules (install via `pip`).
+- **Standard library** — modules that ship with Python (`csv`, `statistics`, `random`, `re`, `json`, `datetime`, `pathlib`).
+- **Context manager (`with`)** — a block that sets up and tears down a resource automatically (e.g., closes a file).
+- **CSV** — comma-separated values; a plain-text table. `csv.DictReader` turns each row into a dict.
+- **Class / Object (OOP)** — a blueprint (`class`) and the things built from it (instances). Bundles data + behavior.
+- **`self`** — inside a class, "this particular instance."
+- **`__init__`** — the setup method run when you create an instance. **Dunder** = "double underscore" method.
+- **`@property`** — makes a method look like an attribute; lets you validate on get/set.
+- **Generator / `yield`** — produces values one at a time, lazily; saves memory on big data. Can be iterated once.
+- **`lambda`** — a tiny anonymous function, often used as a `key=` for sorting.
+- **Regex (regular expression)** — a pattern language for matching/extracting text (`re` module).
+- **Traceback** — the error report Python prints when something fails. **Read the last line first.**
+- **REPL** — the interactive `>>>` prompt where you type one line at a time.
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
