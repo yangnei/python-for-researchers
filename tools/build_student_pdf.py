@@ -135,7 +135,7 @@ def render() -> str:
             sections.append(f'<div class="pagebreak"></div>{convert(practice_path.read_text())}')
 
     # Appendices: cheat sheets and quizzes.
-    for fname in ("traps-and-gotchas.md", "quick-reference.md", "glossary.md"):
+    for fname in ("setup-and-tools.md", "traps-and-gotchas.md", "quick-reference.md", "glossary.md"):
         sections.append(f'<div class="pagebreak"></div>{convert((cheats_dir / fname).read_text())}')
     sections.append(f'<div class="pagebreak"></div>{convert((ROOT / "assessments" / "quizzes.md").read_text())}')
 

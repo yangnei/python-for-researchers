@@ -366,6 +366,7 @@ def build_index() -> str:
 
 <h2>Keep these open</h2>
 <ul>
+  <li><strong>New to Python?</strong> <a href="cheatsheets.html#setup">Set up your computer &amp; learning tools</a> — install per-OS (or run in the browser, no install), plus Python&nbsp;Tutor, regex101, and how to use AI to learn.</li>
   <li><a href="cheatsheets.html">Traps &amp; Gotchas cheat sheet</a> — the quirks, wrong-vs-right (start here, Session&nbsp;2).</li>
   <li><a href="cheatsheets.html#quick-reference">Quick syntax reference</a> and <a href="cheatsheets.html#glossary">plain-language glossary</a>.</li>
   <li><a href="{STUDENT_PDF}" download>The whole course as a PDF</a> — for reading offline or printing.</li>
@@ -410,15 +411,18 @@ def build_session(n: int, title: str, slides_dir: Path, examples_dir: Path, quiz
 
 
 def build_cheats(cheats_dir: Path) -> str:
+    setup = (cheats_dir / "setup-and-tools.md").read_text()
     traps = (cheats_dir / "traps-and-gotchas.md").read_text()
     quick = (cheats_dir / "quick-reference.md").read_text()
     gloss = (cheats_dir / "glossary.md").read_text()
     combined = (
         "# Cheat Sheets\n\n"
-        "Jump to: [Traps &amp; Gotchas](#traps) · "
+        "Jump to: [Setup &amp; Tools](#setup) · "
+        "[Traps &amp; Gotchas](#traps) · "
         "[Quick Reference](#quick-reference) · "
         "[Glossary](#glossary)\n\n"
-        '<div id="traps"></div>\n\n' + traps +
+        '<div id="setup"></div>\n\n' + setup +
+        '\n\n---\n\n<div id="traps"></div>\n\n' + traps +
         '\n\n---\n\n<div id="quick-reference"></div>\n\n' + quick +
         '\n\n---\n\n<div id="glossary"></div>\n\n' + gloss
     )
