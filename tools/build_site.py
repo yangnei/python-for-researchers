@@ -319,6 +319,29 @@ CDN = {
 # Offline PDF companion (built by tools/build_student_pdf.py, served from docs/).
 STUDENT_PDF = "learn-python-student.pdf"
 
+# Jupyter notebooks (built by tools/build_notebooks.py) + the in-browser JupyterLite app
+# (built by tools/build_jupyterlite.sh), both served from docs/. The Colab launcher reads
+# the .ipynb straight from the GitHub repo, so these must match the live repo path.
+GH_OWNER, GH_REPO, GH_BRANCH = "yangnei", "learn-python", "main"
+NB_DIR = "notebooks"          # docs/notebooks/session-NN.ipynb
+LITE_DIR = "jupyter"          # docs/jupyter/  (JupyterLite static app)
+
+
+def notebook_bar(n: int) -> str:
+    """Launch bar: run this session as a notebook (in-browser, Colab, or download)."""
+    stem = f"session-{n:02d}.ipynb"
+    lite = f"{LITE_DIR}/notebooks/index.html?path={stem}"
+    colab = (f"https://colab.research.google.com/github/{GH_OWNER}/{GH_REPO}"
+             f"/blob/{GH_BRANCH}/docs/{NB_DIR}/{stem}")
+    download = f"{NB_DIR}/{stem}"
+    return f"""
+<aside class="nb-bar">
+  <span class="nb-label"><span class="nb-mark">▦</span> Prefer a notebook?</span>
+  <a class="nb-btn nb-primary" href="{lite}" target="_blank" rel="noopener">Run in browser</a>
+  <a class="nb-btn" href="{colab}" target="_blank" rel="noopener">Open in Colab</a>
+  <a class="nb-btn" href="{download}" download>Download .ipynb</a>
+</aside>"""
+
 # Set the theme on <html> before first paint (no flash). Uses the saved choice if any,
 # otherwise defaults to light — the OS preference is intentionally not auto-applied.
 THEME_INIT = (
@@ -454,6 +477,7 @@ def build_index() -> str:
   <li><strong>New to Python?</strong> <a href="cheatsheets.html#setup">Set up your computer &amp; learning tools</a> — install per-OS (or run in the browser, no install), plus Python&nbsp;Tutor, regex101, and how to use AI to learn.</li>
   <li><a href="cheatsheets.html">Traps &amp; Gotchas cheat sheet</a> — the quirks, wrong-vs-right (start here, Session&nbsp;2).</li>
   <li><a href="cheatsheets.html#quick-reference">Quick syntax reference</a> and <a href="cheatsheets.html#glossary">plain-language glossary</a>.</li>
+  <li><strong>Prefer notebooks?</strong> <a href="{LITE_DIR}/lab/index.html" target="_blank" rel="noopener">Open all sessions as Jupyter notebooks in your browser</a> — a full Jupyter, no install. Each session page also links Colab and a <code>.ipynb</code> download.</li>
   <li><a href="{STUDENT_PDF}" download>The whole course as a PDF</a> — for reading offline or printing.</li>
 </ul>
 """
@@ -472,6 +496,7 @@ def build_session(n: int, title: str, slides_dir: Path, examples_dir: Path, quiz
     pg = PLAYGROUNDS.get(n, [])
     body = f"""
 <article>
+  {notebook_bar(n)}
   <div id="lesson" class="md"></div>
   <section id="playgrounds"></section>
   {practice_block}

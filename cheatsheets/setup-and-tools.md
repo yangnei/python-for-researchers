@@ -8,6 +8,23 @@ Every example on this site runs **in your browser** — just press **Run**. Noth
 install, great for the first sessions. When you want to work on *your own files*, install Python
 locally with the steps below.
 
+## Run the course as Jupyter notebooks
+Every session is also a **Jupyter notebook** — the same examples and practice as a runnable,
+cell-by-cell document. Three ways to use them; pick whatever fits:
+
+- **In your browser, no install** — open the live JupyterLite workspace:
+  <https://yangnei.github.io/learn-python/jupyter/lab/index.html>. It's real Jupyter running
+  entirely in your browser; your edits are saved locally in the browser, nothing is uploaded.
+  Each session page also has a **Run in browser** button that opens that session's notebook directly.
+- **Google Colab** — each session page has an **Open in Colab** button (free, runs in Google's
+  cloud, needs a Google account). Handy when you want to save to Drive or do heavier data work.
+- **Local Jupyter** — once Python is installed (below): `pip install jupyterlab`, then run
+  `jupyter lab` and open the `.ipynb` you saved with a session page's **Download .ipynb** button.
+
+**How to drive a notebook:** click a cell and press **Shift + Enter** to run it and move to the
+next. Predict the output before you run — the surprise is the lesson — then edit a cell and re-run
+to experiment.
+
 ## Install Python (pick your OS)
 
 **Windows**

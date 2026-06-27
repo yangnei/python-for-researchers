@@ -21,6 +21,10 @@ deliberately front-loaded with the **easily-missed language fundamentals** (the 
   session page, collapsible solutions, self-checking quizzes, and progress tracking. The site also
   offers a **downloadable student PDF** (`docs/learn-python-student.pdf`) for offline reading. See
   [Hosting on GitHub Pages](#hosting-the-student-site-on-github-pages).
+- **Student → Jupyter notebooks** (`docs/notebooks/`): every session is also a self-contained
+  `.ipynb`. Each session page links three ways to run it — **Run in browser** (a hosted
+  [JupyterLite](https://jupyterlite.readthedocs.io/) app in `docs/jupyter/`, no install),
+  **Open in Colab**, and **Download .ipynb** for local Jupyter/VS Code.
 - **Teacher → PDF** (`output/teacher-edition.pdf`): the full instructor playbook (minute-by-minute
   clocks, transition scripts, predicted misconceptions, Socratic prompts) + the outline, connection
   map, and quiz keys as appendices. Print it or read on screen.
@@ -47,14 +51,24 @@ All artifacts are generated from the markdown — edit the source, then rebuild:
 # Student website  ->  docs/
 python3 tools/build_site.py
 
+# Jupyter notebooks  ->  docs/notebooks/*.ipynb   (from examples/, no extra deps)
+python3 tools/build_notebooks.py
+
+# In-browser JupyterLite app  ->  docs/jupyter/   (one-time tooling, then rebuild)
+python3 -m venv .venv-jlite
+.venv-jlite/bin/pip install jupyterlite-core jupyterlite-pyodide-kernel jupyter-server
+bash tools/build_jupyterlite.sh
+
 # Teacher PDF  ->  output/teacher-edition.pdf       (needs the `markdown` package + chromium)
 # Student PDF  ->  docs/learn-python-student.pdf
 python3 -m venv .venv && .venv/bin/pip install markdown
 .venv/bin/python tools/build_teacher_pdf.py
 .venv/bin/python tools/build_student_pdf.py
 ```
-The site itself needs no build dependencies (it renders markdown client-side); only the two PDF
-builds need `markdown` + a headless Chromium.
+The site and notebooks need no special dependencies (the site renders markdown client-side; the
+notebook generator is plain Python). The PDF builds need `markdown` + a headless Chromium, and the
+JupyterLite app needs the `jupyterlite-*` tooling shown above. Regenerate notebooks **before**
+rebuilding JupyterLite so the in-browser copies stay in sync.
 
 ## What's in the box
 ```
@@ -81,11 +95,15 @@ learn-python/
 ├── docs/                           ← STUDENT interactive website (GitHub Pages)
 │   ├── index.html, session-01..10.html, cheatsheets.html
 │   ├── learn-python-student.pdf    ← downloadable student edition (offline reading)
+│   ├── notebooks/session-01..10.ipynb  ← one Jupyter notebook per session
+│   ├── jupyter/                    ← hosted JupyterLite app (run notebooks in-browser)
 │   └── assets/ (style.css, app.js) ← Pyodide-powered runnable code, quizzes, progress
 ├── output/
 │   └── teacher-edition.pdf         ← TEACHER edition, print-ready
 └── tools/
     ├── build_site.py               ← regenerates docs/ from the markdown
+    ├── build_notebooks.py          ← regenerates docs/notebooks/*.ipynb from examples/
+    ├── build_jupyterlite.sh        ← rebuilds the in-browser JupyterLite app
     ├── build_teacher_pdf.py        ← regenerates the teacher PDF
     └── build_student_pdf.py        ← regenerates the student PDF
 ```

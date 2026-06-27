@@ -2,7 +2,13 @@
 __pycache__/
 *.pyc
 .venv/
+.venv-jlite/
 venv/
+
+# JupyterLite build working dir (the built app in docs/jupyter IS committed).
+# Anchored to repo root so it does NOT match docs/jupyter/build/ (lab assets).
+/build/
+.jupyterlite.doit.db
 
 # OS
 .DS_Store
