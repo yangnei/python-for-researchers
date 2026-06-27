@@ -11,7 +11,7 @@ paginate: true
 
 ---
 
-## Why this hour matters
+## Why this session matters
 
 Python won't lock a variable to a type. That freedom creates **subtle traps**:
 mixing numbers, comparing across types, trusting floats.

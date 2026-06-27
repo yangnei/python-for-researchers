@@ -1,6 +1,6 @@
-# Session 2 — Practice (25 min)
+# Session 2 — Practice (60 min)
 
-## Part A — Explain the gauntlet (10 min)
+## Part A — Explain the gauntlet (25 min)
 For each line, write *why* (one sentence). Predict, then run to check.
 
 ```python
@@ -14,7 +14,7 @@ bool("0")              # True  — non-empty string is truthy
 x=[1]; y=x; x.append(2); y   # [1,2] — y is an alias of x
 ```
 
-## Part B — `clean_score()` (15 min)
+## Part B — `clean_score()` (35 min)
 Write a function that safely turns a value into a float on a 0–100 scale:
 
 ```python

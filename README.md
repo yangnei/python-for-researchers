@@ -5,7 +5,7 @@ experience** but strong self-learning skills. The pace is accelerated and the co
 deliberately front-loaded with the **easily-missed language fundamentals** (the dynamic-typing
 "traps") that beginners skip and later get bitten by.
 
-- **Length:** **10 one-hour sessions** + an optional 11th capstone hour.
+- **Length:** **10 two-hour sessions** (~20 hours) + an optional 11th capstone session.
 - **Two editions:** a clean **student** track and a **teacher** track (timing, transitions, misconceptions).
 - **Everything original.** All prose, slides, code, and cheat sheets here were written for this learner.
 
@@ -120,10 +120,10 @@ Requires Python 3.11+. The only optional third-party packages are `pytest` (Sess
 and `pandas` (Session 8 teaser); everything else is the standard library.
 
 ## Scaling to the available time
-- **~8 hours:** fold the Pythonic-toolkit half of S10 into S4/S5 and drop the pandas teaser
+- **~16 hours:** fold the Pythonic-toolkit half of S10 into S4/S5 and drop the pandas teaser
   (recursion, S6, stays — it's a core skill, not an add-on).
-- **10 hours:** run S1–S10 as written (recommended).
-- **11 hours:** add the S11 capstone.
+- **~20 hours:** run S1–S10 as written, two hours each (recommended).
+- **~22 hours:** add the S11 capstone.
 
 ## Note
 All instructional content in this package — prose, slides, code, cheat sheets, and quizzes —

@@ -1,4 +1,4 @@
-# Session 3 — Practice (25 min): Conditionals & Loops
+# Session 3 — Practice (60 min): Conditionals & Loops
 
 ## Task 1 — Grade-band classifier
 Write `letter_grade(score)` returning A/B/C/D/F (90/80/70/60 cutoffs), `"Invalid"` outside 0–100.

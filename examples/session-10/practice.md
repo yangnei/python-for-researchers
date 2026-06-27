@@ -1,4 +1,4 @@
-# Session 10 — Practice (25 min): Modules, OOP & Pythonic
+# Session 10 — Practice (60 min): Modules, OOP & Pythonic
 
 Files in this folder: `grades.py` (a module you import), `demo.py` (worked example).
 

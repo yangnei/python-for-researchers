@@ -1,4 +1,4 @@
-# Session 5 — Practice (25 min)
+# Session 5 — Practice (60 min)
 
 ## Task 1 — Grade-functions module
 Write three functions with docstrings and type hints:

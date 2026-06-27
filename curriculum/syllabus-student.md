@@ -1,12 +1,13 @@
 # Learn Python — Student Syllabus
 
-Welcome. This is a fast, 10-hour path from "never coded" to "I can write a real Python program
+Welcome. This is a fast, ~20-hour path (ten two-hour sessions) from "never coded" to "I can write a real Python program
 to wrangle my research data." It is re-ordered for you and front-loaded with the language
 quirks that trip people up.
 
-**How each hour runs:** Concept (≈12 min) → I code, you watch (≈8 min) → **you code (≈30 min,
-packed)** → Traps recap + quiz (≈10 min). The practice block is the biggest on purpose — you
-learn by typing, and it holds enough tasks to fill the time. You will *type every example yourself*.
+**How each 2-hour session runs:** Concept (≈25 min) → I code, you watch (≈15 min) → **you code
+(≈60 min, packed, split around a short break)** → Traps recap + quiz (≈15 min). The practice block
+is the biggest on purpose — you learn by typing, and it holds enough tasks to fill the time. You
+will *type every example yourself*.
 
 **What you need:** Python 3.11+, VS Code (or any editor), and this folder. Open the matching
 `slides/`, `examples/`, and `cheatsheets/` file for each session. (A full **PDF** of the course
@@ -14,7 +15,7 @@ is downloadable from the website if you want to read offline.)
 
 ---
 
-## The 10 sessions (1 hour each)
+## The 10 sessions (2 hours each)
 
 | # | Title | You'll be able to… | Files |
 |---|---|---|---|
@@ -30,7 +31,7 @@ is downloadable from the website if you want to read offline.)
 | 10 | **Modules, OOP & the Pythonic Toolkit** | Import modules; build a small class with `@property`; use generators/`map`/`filter` | `slides/session-10` · `examples/session-10` |
 | 11 | **Capstone (optional)** | Build a Gradebook & Survey Analyzer end-to-end | `assessments/capstone-project` |
 
-Session 2 is the most load-bearing hour — if you deeply master one, make it that one.
+Session 2 is the most load-bearing session — if you deeply master one, make it that one.
 
 ---
 

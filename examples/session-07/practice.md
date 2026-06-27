@@ -1,4 +1,4 @@
-# Session 7 — Practice (25 min)
+# Session 7 — Practice (60 min)
 
 ## Task 1 — `safe_int`
 Write `safe_int(value)` returning `int(value)` or `None` on failure. Test on

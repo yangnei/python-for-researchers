@@ -97,7 +97,7 @@ COVER = f"""
   <div class="sub">Learn Python</div>
   <h1>Student Edition</h1>
   <div class="rule"></div>
-  <p style="font-size:12pt;color:#33415c">10 one-hour sessions · runnable examples ·
+  <p style="font-size:12pt;color:#33415c">10 two-hour sessions · runnable examples ·
      trap cheat sheets · self-check quizzes</p>
   <div class="meta">
      An accelerated, self-study Python course<br>

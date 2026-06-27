@@ -1,7 +1,7 @@
 # Master Course Outline — Learn Python
 
 > Single source of truth. The student and teacher syllabi both derive from this.
-> **10 core one-hour sessions** + 1 optional capstone hour.
+> **10 core two-hour sessions** + 1 optional capstone session (~20 hours core, ~22 with the capstone).
 
 ## How the topics are sequenced
 
@@ -10,7 +10,7 @@ exceptions → libraries → unit tests → file I/O → regular expressions →
 "power-tools."
 
 We **re-sequence** for a fast adult learner: dynamic-typing fundamentals come forward into
-Session 2; conditionals and loops are taught together as one "control flow" hour (they're the
+Session 2; conditionals and loops are taught together as one "control flow" session (they're the
 two halves of the same idea, and a fast learner clears them quickly); and the power-tools
 (comprehensions, generators, `*args`, type hints) are folded into the sessions where they
 naturally belong instead of left to the end. **Recursion** gets its own session right after
@@ -18,8 +18,8 @@ Functions (S6): it's a function that calls itself, so it lands best while functi
 fresh — and Data Structures (S4) is already in hand for the nested-data payoff.
 
 ## Design rules (from the e-learning pipeline)
-- Every session = one hour, structured **Concept → Live Example → Practice → Traps → Summary**.
-- **Practice is the biggest block (~30 min) and is packed** — this learner moves fast, so each
+- Every session = two hours, structured **Concept → Live Example → Practice → (break) → more Practice → Traps → Summary**.
+- **Practice is the biggest block (~60 min, split around a mid-session break) and is packed** — this learner moves fast, so each
   session's practice carries enough tasks to fill the time without padding.
 - Every session has 2–4 learning objectives; every objective is testable in that session's quiz.
 - Every abstract idea ships with a runnable, education-flavored example.
@@ -162,7 +162,7 @@ Alternative briefs are listed in `assessments/capstone-project.md`.
 | Power-tools (sets, comprehensions, `*args`, type hints, generators, `map`/`filter`) | S4, S5, S10 |
 
 ## Scaling to the time budget
-- **~8 hours:** fold the Pythonic-toolkit half of S10 into S4/S5 and trim the `pandas` teaser
+- **~16 hours:** fold the Pythonic-toolkit half of S10 into S4/S5 and trim the `pandas` teaser
   (recursion, S6, stays — it's a core skill, not an add-on).
-- **10 hours:** run S1–S10 as written (recommended).
-- **11 hours:** add the S11 capstone.
+- **~20 hours:** run S1–S10 as written, two hours each (recommended).
+- **~22 hours:** add the S11 capstone.

@@ -1,4 +1,4 @@
-# Session 8 — Practice (25 min)
+# Session 8 — Practice (60 min)
 
 Files provided: `students.csv`, `survey.csv`.
 

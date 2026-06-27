@@ -1,4 +1,4 @@
-# Session 1 — Practice (25 min)
+# Session 1 — Practice (60 min)
 
 Type each solution yourself. Predict output before running. Solutions at the bottom.
 

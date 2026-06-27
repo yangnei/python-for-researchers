@@ -7,7 +7,7 @@ paginate: true
 # Session 8
 ## Files, Libraries & Research Data
 
-The hour your actual data shows up.
+The session your actual data shows up.
 
 ---
 

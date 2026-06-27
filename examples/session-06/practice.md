@@ -1,4 +1,4 @@
-# Session 6 — Practice (30 min): Recursion & Recursive Thinking
+# Session 6 — Practice (60 min): Recursion & Recursive Thinking
 
 ## Task 1 — Recursive sum
 Write `rsum(n)` that adds `1 + 2 + ... + n` **with recursion** (no loop).

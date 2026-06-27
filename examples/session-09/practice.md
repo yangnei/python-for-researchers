@@ -1,4 +1,4 @@
-# Session 9 — Practice (25 min): Regular Expressions
+# Session 9 — Practice (60 min): Regular Expressions
 
 Always use raw strings `r"..."`. Predict each result before running.
 

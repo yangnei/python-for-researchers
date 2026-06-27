@@ -1,6 +1,6 @@
 # Per-Session Quizzes (with answer keys)
 
-Each quiz is 3–5 questions, ~5 minutes, given at the end of the hour. Every question maps to
+Each quiz is 3–5 questions, ~5 minutes, given at the end of the session. Every question maps to
 a session objective. **Teacher:** ask the student to *predict* code output before they run it —
 the surprise is the assessment. Answers are at the end of each session block.
 

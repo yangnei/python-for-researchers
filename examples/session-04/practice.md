@@ -1,4 +1,4 @@
-# Session 4 — Practice (25 min)
+# Session 4 — Practice (60 min)
 
 Start from:
 ```python
