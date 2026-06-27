@@ -329,6 +329,9 @@ def page_shell(title: str, active: str, body: str, scripts: str, page_id: str = 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Space+Grotesk:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="stylesheet" href="{CDN['hljs_css']}">
 </head>
@@ -353,19 +356,32 @@ def build_index() -> str:
         cards.append(
             f'<a class="card" href="{page}.html" data-page="{page}">'
             f'<span class="done">✓</span>'
-            f'<div class="n">SESSION {n}</div>'
+            f'<div class="n">Session {n:02d}</div>'
             f'<div class="t">{html.escape(title)}</div>'
-            f'<div class="d">{html.escape(desc)}</div></a>')
+            f'<div class="d">{html.escape(desc)}</div>'
+            f'<div class="go">Open <span aria-hidden="true">&rarr;</span></div></a>')
     body = f"""
-<h1 class="page-title">Learn Python</h1>
-<p class="dl-line"><a class="dl-btn" href="{STUDENT_PDF}" download>&#8595; Download the full course (PDF)</a>
-<span class="dl-note">— all 10 sessions, practice, and cheat sheets for offline reading.</span></p>
+<section class="hero">
+  <h1 class="hero-title">Learn <span class="py">Python</span></h1>
+  <figure class="repl">
+    <figcaption class="repl-bar">python3 — interactive session</figcaption>
+    <pre class="repl-body"><span class="c"># predict each line, then run it</span>
+<span class="p">&gt;&gt;&gt;</span> 0.1 + 0.2
+<span class="o">0.30000000000000004</span>
+<span class="p">&gt;&gt;&gt;</span> True == 1
+<span class="o">True</span>
+<span class="p">&gt;&gt;&gt;</span> 5 == "5"
+<span class="o">False</span></pre>
+  </figure>
+  <p class="dl-line"><a class="dl-btn" href="{STUDENT_PDF}" download>&#8595; Download the full course (PDF)</a>
+  <span class="dl-note">— all 10 sessions, practice, and cheat sheets for offline reading.</span></p>
+</section>
 
-<h2>The sessions</h2>
+<h2 class="sec">The sessions</h2>
 <div class="cards">{''.join(cards)}</div>
 
-<h2>Keep these open</h2>
-<ul>
+<h2 class="sec">Keep these open</h2>
+<ul class="resources">
   <li><strong>New to Python?</strong> <a href="cheatsheets.html#setup">Set up your computer &amp; learning tools</a> — install per-OS (or run in the browser, no install), plus Python&nbsp;Tutor, regex101, and how to use AI to learn.</li>
   <li><a href="cheatsheets.html">Traps &amp; Gotchas cheat sheet</a> — the quirks, wrong-vs-right (start here, Session&nbsp;2).</li>
   <li><a href="cheatsheets.html#quick-reference">Quick syntax reference</a> and <a href="cheatsheets.html#glossary">plain-language glossary</a>.</li>

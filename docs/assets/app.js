@@ -1,4 +1,4 @@
-/* Python for Researchers — interactive site runtime.
+/* Learn Python — interactive site runtime.
    - Renders embedded markdown (marked) + syntax highlight (highlight.js)
    - Turns playground snippets into editable, runnable editors via Pyodide (Python in the browser)
    - Tracks per-page completion in localStorage and reflects it in the nav. */
