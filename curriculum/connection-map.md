@@ -69,6 +69,14 @@
 - **Where it breaks:** a construct is a measurement choice; a class is also *behavior* (methods) and
   *enforced rules* (validation in setters), so it's a construct that can defend its own integrity.
 
+### 11. Recursion  *(S10)*
+- **Maps onto:** a **hierarchy / nested structure** — coding schemes with sub-codes, threaded
+  discussion data, folder trees of data files, nested JSON survey exports. A procedure "defined in
+  terms of itself" mirrors data that contains smaller copies of itself.
+- **Where it breaks:** recursion is elegant only when the structure is genuinely nested and the
+  base case is reachable; for a flat sequence, a loop is clearer, and Python's stack limit (~1000,
+  no tail-call optimization) makes very deep recursion a liability rather than a virtue.
+
 ---
 
 ## Questions to hold while learning (Socratic spine)

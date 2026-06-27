@@ -5,7 +5,7 @@ experience** but strong self-learning skills. The pace is accelerated and the co
 deliberately front-loaded with the **easily-missed language fundamentals** (the dynamic-typing
 "traps") that beginners skip and later get bitten by.
 
-- **Length:** **9 one-hour sessions** + an optional 10th capstone hour.
+- **Length:** **10 one-hour sessions** + an optional 11th capstone hour.
 - **Two editions:** a clean **student** track and a **teacher** track (timing, transitions, misconceptions).
 - **Everything original.** All prose, slides, code, and cheat sheets here were written for this learner.
 
@@ -68,9 +68,9 @@ learn-python/
 │   ├── syllabus-teacher.md         ← TEACHER edition (timing, transitions, Socratic prompts)
 │   └── connection-map.md           ← Python ⇄ education-research bridges (personalization)
 ├── slides/
-│   └── session-01..09-slides.md    ← Marp-compatible slide decks (one per session)
+│   └── session-01..10-slides.md    ← Marp-compatible slide decks (one per session)
 ├── examples/
-│   └── session-01..09/             ← runnable demo.py + practice.md (+ sample CSVs in S7)
+│   └── session-01..10/             ← runnable demo.py + practice.md (+ sample CSVs in S7)
 ├── cheatsheets/
 │   ├── traps-and-gotchas.md        ← the quirks, wrong-vs-right, all verified
 │   ├── quick-reference.md          ← syntax you'll forget
@@ -79,7 +79,7 @@ learn-python/
 │   ├── quizzes.md                  ← per-session quizzes + answer keys
 │   └── capstone-project.md         ← the Gradebook & Survey Analyzer
 ├── docs/                           ← STUDENT interactive website (GitHub Pages)
-│   ├── index.html, session-01..09.html, cheatsheets.html
+│   ├── index.html, session-01..10.html, cheatsheets.html
 │   ├── learn-python-student.pdf    ← downloadable student edition (offline reading)
 │   └── assets/ (style.css, app.js) ← Pyodide-powered runnable code, quizzes, progress
 ├── output/
@@ -90,7 +90,7 @@ learn-python/
     └── build_student_pdf.py        ← regenerates the student PDF
 ```
 
-## The 9 sessions at a glance
+## The 10 sessions at a glance
 | # | Title |
 |---|---|
 | 1 | Running Python, Variables & Types |
@@ -102,7 +102,8 @@ learn-python/
 | 7 | Files, Libraries & Research Data |
 | 8 | Regular Expressions & Text Cleaning |
 | 9 | Modules, OOP & the Pythonic Toolkit |
-| 10 | Capstone (optional) |
+| 10 | Recursion & Recursive Thinking |
+| 11 | Capstone (optional) |
 
 ## How to render the slides (optional)
 The decks are plain Markdown with `---` slide breaks and Marp front-matter. To export to
@@ -119,9 +120,10 @@ Requires Python 3.11+. The only optional third-party packages are `pytest` (Sess
 and `pandas` (Session 7 teaser); everything else is the standard library.
 
 ## Scaling to the available time
-- **~8 hours:** fold the Pythonic-toolkit half of S9 into S4/S5 and drop the pandas teaser.
-- **9 hours:** run S1–S9 as written (recommended).
-- **10 hours:** add the S10 capstone.
+- **~8 hours:** fold the Pythonic-toolkit half of S9 into S4/S5, drop the pandas teaser, and treat
+  recursion (S10) as optional self-study.
+- **10 hours:** run S1–S10 as written (recommended).
+- **11 hours:** add the S11 capstone.
 
 ## Note
 All instructional content in this package — prose, slides, code, cheat sheets, and quizzes —

@@ -1,0 +1,68 @@
+"""Session 10 — Recursion & Recursive Thinking  (run me: python3 demo.py)."""
+
+import sys
+
+
+# 1) The shape of EVERY recursive function: a base case + a recursive case.
+def countdown(n):
+    if n <= 0:                 # BASE CASE — the stop condition
+        print("liftoff!")
+        return
+    print(n)
+    countdown(n - 1)           # RECURSIVE CASE — same problem, smaller input
+
+print("countdown:")
+countdown(3)
+
+
+# 2) Recursion vs iteration: same answer, two styles. Each call adds a stack frame.
+def factorial(n):
+    if n <= 1:
+        return 1               # base case
+    return n * factorial(n - 1)   # remember to RETURN the recursive call
+
+def factorial_loop(n):
+    total = 1
+    for k in range(2, n + 1):
+        total *= k
+    return total
+
+print("\nfactorial(5):", factorial(5), "==", factorial_loop(5))
+
+
+# 3) Where recursion SHINES: naturally NESTED data, where one loop can't reach
+#    all the way down. This is shaped like a real nested-JSON export.
+export = {
+    "cohort": "2026",
+    "students": [
+        {"name": "Ana", "scores": [91, 88]},
+        {"name": "Ben", "scores": [58, [60, 64]]},   # arbitrarily nested
+    ],
+}
+
+def deep_sum(obj):
+    """Add up every number found anywhere inside nested lists/dicts."""
+    if isinstance(obj, bool):                 # bool is an int subclass (Session 2!)
+        return 0
+    if isinstance(obj, (int, float)):
+        return obj
+    if isinstance(obj, dict):
+        return sum(deep_sum(v) for v in obj.values())
+    if isinstance(obj, (list, tuple)):
+        return sum(deep_sum(x) for x in obj)
+    return 0                                  # strings, None, etc. contribute nothing
+
+print("\ndeep_sum of nested export:", deep_sum(export))   # 91+88+58+60+64 = 361
+
+
+# 4) The trap: with no reachable base case, recursion never stops. Python has no
+#    tail-call optimization, so it just piles up stack frames until it gives up.
+print("\nPython's recursion limit:", sys.getrecursionlimit())
+
+def runaway(n):
+    return runaway(n + 1)        # BUG: never reaches a base case
+
+try:
+    runaway(0)
+except RecursionError:
+    print("RecursionError: maximum recursion depth exceeded (as expected)")

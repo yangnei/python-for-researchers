@@ -15,7 +15,7 @@ Each session has:
 - **Cut line** — the first thing to drop if you're running over.
 
 ## Universal pacing principles (this learner is fast)
-- **Talk less than you want to.** She reads fast and abstracts well. Default to "here's the rule, here's the trap, now you try."
+- **Talk less than you want to.** He reads fast and abstracts well. Default to "here's the rule, here's the trap, now you try."
 - **Protect — and fill — the practice block.** The ~30-minute hands-on block is where learning happens. It's packed on purpose: this learner finishes individual tasks quickly, so the block carries *more* tasks rather than more minutes. If concept overruns, steal from your own talking, never from his typing.
 - **Predict-then-run is the engine, especially S2.** Always have him *commit to an answer out loud* before running. The cognitive surprise is the teaching moment.
 - **Don't pad.** Each clock is tight by design — no long buffers to fill with lecture. If he's ahead, give him the next practice task or a stretch goal, not more talking.
@@ -267,7 +267,7 @@ Each session has:
 - **0:12–0:24 — OOP.** A small `Student` class: `__init__`, `self` ("this particular student"), a method, `__str__`, a validating `@property` setter (Connection Map #10), then brief inheritance with `super()`.
 - **0:24–0:54 — Practice (packed).** Build the validating `Student`, add `GradStudent(super())`, then one comprehension + `map` + `filter` + a generator (`examples/session-09/practice.md`). Mix in the Pythonic-toolkit recap (comprehensions, `map`/`filter`, `enumerate`/`zip`, generators/`yield`, walrus `:=`) as you hand out tasks rather than lecturing it.
 - **0:54–0:58 — Traps recap.** `self` confusion; a generator exhausts after one pass; over-using a class where a function/dict fits; forgetting the `__main__` guard.
-- **0:58–1:00 — Summary + quiz; course wrap, point to capstone.**
+- **0:58–1:00 — Summary + quiz; point ahead to recursion (S10).**
 
 **Transitions**
 - Modules→OOP: *"Functions in a file is reuse. Now let's bundle data *and* behavior — a class."*
@@ -287,10 +287,50 @@ Each session has:
 
 ---
 
-## SESSION 10 (Optional) — Capstone
-**Role shift:** you stop teaching and start *coaching*. She drives; you ask questions and unblock.
-- **0:00–0:10 — Brief & plan.** She restates the goal and sketches the steps aloud (pseudocode). You only check the plan is sound.
-- **0:10–0:45 — Build.** She codes the Gradebook & Survey Analyzer (`assessments/capstone-project.md`). Intervene only when stuck >3 min; prefer a question over an answer.
+## SESSION 10 — Recursion & Recursive Thinking
+**Pre-flight:** `examples/session-10/`; a nested-JSON-shaped dict staged for the `deep_sum` demo;
+have `sys.getrecursionlimit()` ready and the `runaway` overflow demo queued.
+
+**The clock (60 min)**
+- **0:00–0:04 — Warm-up.** Re-surface an S9 trap from your misconceptions log.
+- **0:04–0:16 — Concept.** The two parts: a **base case** and a **recursive case** that moves
+  toward it. Trace `factorial(3)` on the board as a stack that builds, then unwinds. Recursion vs
+  iteration (factorial both ways). Name the cost: each pending call is a stack frame; Python has
+  **no tail-call optimization** (`sys.getrecursionlimit()` ≈ 1000).
+- **0:16–0:24 — Live code.** `countdown`/`factorial`; then `deep_sum` over a nested dict — the
+  payoff, since a single loop can't reach the bottom of arbitrarily nested data; then trigger a
+  `RecursionError` with `runaway` and read it together.
+- **0:24–0:54 — Practice (packed).** `examples/session-10/practice.md`: recursive sum, string
+  reverse (recursion vs loop), `flatten`, `depth`, and the two trap-fixes. Hand out the next task
+  as each lands.
+- **0:54–0:58 — Traps recap.** Unreachable base case → stack overflow; forgetting to `return` the
+  recursive call → silent `None`; recursion isn't free; when a loop simply reads clearer.
+- **0:58–1:00 — Summary + quiz; course wrap, point to the capstone.**
+
+**Transitions**
+- Concept→Live: *"Watch the stack build up and then collapse — that's the whole trick."*
+- Live→Practice: *"Your turn. Say the base case out loud before you write the function — that's where the bugs hide."*
+
+**Predicted misconceptions (this learner)**
+- Will write the recursive case but forget to `return` it → silent `None`. Show it once.
+- Will fear infinite recursion everywhere; reassure — a *reachable* base case is the guarantee.
+- From a vectorized stats background, may not see when recursion beats a loop → the nested-data demo is the "aha."
+- May assume recursion is a free, elegant swap for a loop → show the `RecursionError` and the ~1000 limit.
+
+**Socratic prompts**
+- "What's the smallest input where the answer is obvious without recursing? That's your base case."
+- "Your data is a list that can contain lists. What kind of function matches a thing defined in terms of itself?"
+- "`factorial(2000)` by recursion vs by loop — which one risks crashing, and why?"
+
+**Cut line:** drop the `depth`/string-reverse practice tasks; keep base/recursive case, `deep_sum`
+on nested data, and the `RecursionError` demo.
+
+---
+
+## SESSION 11 (Optional) — Capstone
+**Role shift:** you stop teaching and start *coaching*. He drives; you ask questions and unblock.
+- **0:00–0:10 — Brief & plan.** He restates the goal and sketches the steps aloud (pseudocode). You only check the plan is sound.
+- **0:10–0:45 — Build.** He codes the Gradebook & Survey Analyzer (`assessments/capstone-project.md`). Intervene only when stuck >3 min; prefer a question over an answer.
 - **0:45–0:55 — Review.** Walk his code for the traps from S2/S4/S5 (identity, aliasing, mutable defaults). Praise readability.
 - **0:55–1:00 — Debrief & next steps.** Point to pandas/visualization as the genuine next course.
 

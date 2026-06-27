@@ -1,6 +1,6 @@
 # Capstone Project — Gradebook & Survey Analyzer
 
-**Time:** ~1 hour (Session 10). **Role:** the student drives; the teacher coaches with questions.
+**Time:** ~1 hour (Session 11). **Role:** the student drives; the teacher coaches with questions.
 **Goal:** independently build one end-to-end program on realistic education data, exercising
 every fundamental from the course.
 
@@ -33,6 +33,8 @@ Write a program `analyzer.py` that:
 - Validate student emails/IDs with a regex.
 - Add a `Student` class with a validating `@property` and use it to hold each record.
 - Use a **generator** to stream rows if the file were huge.
+- Read a **nested** export (e.g., grades grouped by class → student → attempts) and total it with
+  a **recursive** `deep_sum` (S10).
 - Add a `--top N` command-line argument with `sys.argv` or `argparse`.
 - Sort and print the top/bottom 3 students by score.
 

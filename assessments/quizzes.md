@@ -115,6 +115,29 @@ so the object can reject bad data.
 
 ---
 
+## Session 10 — Recursion & Recursive Thinking
+1. What two parts must every recursive function have?
+2. What error comes from a base case that's never reached, and why doesn't Python just keep going?
+3. What does this `fact` return for `fact(4)`, and why?
+   ```python
+   def fact(n):
+       if n <= 1:
+           return 1
+       n * fact(n - 1)
+   ```
+4. Name one situation where a plain loop is the better choice than recursion.
+5. Why is recursion a natural fit for nested data (a list of lists, or nested JSON)?
+
+**Answers:** 1. A **base case** (stops) and a **recursive case** (calls itself on a smaller
+input, moving toward the base case). 2. `RecursionError: maximum recursion depth exceeded` —
+Python has no tail-call optimization, so each pending call keeps a stack frame until it hits the
+limit (~1000). 3. `None` — the recursive case computes `n * fact(n-1)` but never `return`s it, so
+the function falls off the end. 4. A flat sequence, or work deep enough to exceed the recursion
+limit (a loop has no frame cost). 5. The data is *defined in terms of itself* (a list may contain
+lists), so a function defined in terms of itself mirrors its shape and can reach every level.
+
+---
+
 ## Scoring guide (formative, not graded)
 - **All correct, explained why:** ready for the capstone.
 - **Right answer, fuzzy why:** re-do that session's `traps-and-gotchas` rows.

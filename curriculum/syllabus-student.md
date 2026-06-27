@@ -1,6 +1,6 @@
 # Learn Python — Student Syllabus
 
-Welcome. This is a fast, 9-hour path from "never coded" to "I can write a real Python program
+Welcome. This is a fast, 10-hour path from "never coded" to "I can write a real Python program
 to wrangle my research data." It is re-ordered for you and front-loaded with the language
 quirks that trip people up.
 
@@ -14,7 +14,7 @@ is downloadable from the website if you want to read offline.)
 
 ---
 
-## The 9 sessions (1 hour each)
+## The 10 sessions (1 hour each)
 
 | # | Title | You'll be able to… | Files |
 |---|---|---|---|
@@ -27,7 +27,8 @@ is downloadable from the website if you want to read offline.)
 | 7 | **Files, Libraries & Research Data** | Read/write CSV survey data, use `statistics`/`datetime`, `pip install`, pandas teaser | `slides/session-07` · `examples/session-07` |
 | 8 | **Regular Expressions & Text Cleaning** | Validate, extract, and clean real text with regex patterns & capture groups | `slides/session-08` · `examples/session-08` |
 | 9 | **Modules, OOP & the Pythonic Toolkit** | Import modules; build a small class with `@property`; use generators/`map`/`filter` | `slides/session-09` · `examples/session-09` |
-| 10 | **Capstone (optional)** | Build a Gradebook & Survey Analyzer end-to-end | `assessments/capstone-project` |
+| 10 | **Recursion & Recursive Thinking** | Write functions that call themselves (base + recursive case), trace the call stack, recurse over nested data | `slides/session-10` · `examples/session-10` |
+| 11 | **Capstone (optional)** | Build a Gradebook & Survey Analyzer end-to-end | `assessments/capstone-project` |
 
 Session 2 is the most load-bearing hour — if you deeply master one, make it that one.
 
@@ -46,7 +47,7 @@ Session 2 is the most load-bearing hour — if you deeply master one, make it th
 5. **Connect to what you know.** Every session opens with how the concept maps to research methods/stats (see `connection-map.md`). Lean on those bridges.
 
 ## What "done" looks like
-You finish the capstone (S10) or, at minimum, complete every session's practice block and score
+You finish the capstone (S11) or, at minimum, complete every session's practice block and score
 the per-session quizzes in `assessments/`. The real test: you can open a messy CSV of your own
 data and write a short script that summarizes it without copying from anyone.
 

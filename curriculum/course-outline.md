@@ -1,7 +1,7 @@
 # Master Course Outline — Learn Python
 
 > Single source of truth. The student and teacher syllabi both derive from this.
-> **9 core one-hour sessions** + 1 optional capstone hour.
+> **10 core one-hour sessions** + 1 optional capstone hour.
 
 ## How the topics are sequenced
 
@@ -13,7 +13,8 @@ We **re-sequence** for a fast adult learner: dynamic-typing fundamentals come fo
 Session 2; conditionals and loops are taught together as one "control flow" hour (they're the
 two halves of the same idea, and a fast learner clears them quickly); and the power-tools
 (comprehensions, generators, `*args`, type hints) are folded into the sessions where they
-naturally belong instead of left to the end.
+naturally belong instead of left to the end. **Recursion** gets its own late session (S10): it
+builds on functions, data structures, and nested data, so it lands best once those are solid.
 
 ## Design rules (from the e-learning pipeline)
 - Every session = one hour, structured **Concept → Live Example → Practice → Traps → Summary**.
@@ -122,7 +123,21 @@ reaching for regex where a string method is clearer.
 
 ---
 
-## Session 10 (Optional) — Capstone Project *(integrative)*
+## Session 10 — Recursion & Recursive Thinking
+**Objectives**
+1. Write a recursive function with a correct **base case** and a **recursive case**; trace the
+   **call stack** and convert between recursion and iteration.
+2. Reason about recursion's cost: a missing base case → `RecursionError`, and Python has no
+   tail-call optimization (each pending call keeps a stack frame, default limit ~1000).
+3. Apply recursion to **naturally nested data** (nested lists/dicts, JSON, trees) where a single loop is awkward.
+
+**Trap focus:** missing/unreachable base case (infinite recursion → stack overflow), forgetting to
+`return` the recursive call (silent `None`), assuming recursion is free, reaching for recursion where
+a plain loop reads more clearly.
+
+---
+
+## Session 11 (Optional) — Capstone Project *(integrative)*
 **Objective:** Independently build one small, end-to-end program on a real-ish education dataset.
 Default brief: **"Gradebook & Survey Analyzer"** — read a CSV of students + Likert responses,
 clean and validate it, compute summary statistics, flag at-risk students, and write a report CSV.
@@ -142,9 +157,11 @@ Alternative briefs are listed in `assessments/capstone-project.md`.
 | File I/O | S7 (+ data structures S4) |
 | Regular expressions | S8 |
 | Modules & OOP | S9 |
+| Recursion | S10 (nested data ties to S4) |
 | Power-tools (sets, comprehensions, `*args`, type hints, generators, `map`/`filter`) | S4, S5, S9 |
 
 ## Scaling to the time budget
-- **~8 hours:** fold the Pythonic-toolkit half of S9 into S4/S5 and trim the `pandas` teaser.
-- **9 hours:** run S1–S9 as written (recommended).
-- **10 hours:** add the S10 capstone.
+- **~8 hours:** fold the Pythonic-toolkit half of S9 into S4/S5, trim the `pandas` teaser, and
+  treat recursion (S10) as optional self-study.
+- **10 hours:** run S1–S10 as written (recommended).
+- **11 hours:** add the S11 capstone.

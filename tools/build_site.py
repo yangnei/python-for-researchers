@@ -28,6 +28,7 @@ SESSIONS = [
     (7, "Files, Libraries & Research Data", "open/with, CSV, statistics, the pandas teaser.", False),
     (8, "Regular Expressions & Text Cleaning", "patterns, groups, re.search/sub, raw strings; validate & extract research text.", False),
     (9, "Modules, OOP & the Pythonic Toolkit", "import modules; a class with @property; generators/map/filter/walrus.", False),
+    (10, "Recursion & Recursive Thinking", "base case + recursive case, the call stack, recursion vs iteration, recursing nested data.", False),
 ]
 
 # Editable, in-browser-runnable snippets per session (Pyodide-safe: no file I/O, no input()).
@@ -222,6 +223,34 @@ g = gpas(roster)
 print("first pass: ", list(g))
 print("second pass:", list(g))     # [] - a generator is exhausted after one pass
 '''}],
+    10: [{"title": "recursion.py", "code": '''\
+# Recursion = base case (stop) + recursive case (smaller problem). Predict, then Run.
+def factorial(n):
+    if n <= 1:                 # BASE CASE
+        return 1
+    return n * factorial(n - 1)   # RECURSIVE CASE (remember to return!)
+
+print("factorial(5):", factorial(5))
+
+# Recursion shines on NESTED data, where a single loop can't reach all the way down.
+def deep_sum(obj):
+    if isinstance(obj, bool):              # bool is an int subclass (Session 2!)
+        return 0
+    if isinstance(obj, (int, float)):
+        return obj
+    if isinstance(obj, (list, tuple)):
+        return sum(deep_sum(x) for x in obj)
+    if isinstance(obj, dict):
+        return sum(deep_sum(v) for v in obj.values())
+    return 0
+
+nested = [1, [2, 3, [4, 5]], {"a": 6, "b": [7, 8]}]
+print("deep_sum:", deep_sum(nested))   # 1+2+3+4+5+6+7+8 = 36
+
+# Missing base case -> infinite recursion -> RecursionError. Uncomment to see it:
+# def oops(n): return oops(n + 1)
+# oops(0)
+'''}],
 }
 
 CDN = {
@@ -330,7 +359,7 @@ def build_index() -> str:
     body = f"""
 <h1 class="page-title">Learn Python</h1>
 <p class="dl-line"><a class="dl-btn" href="{STUDENT_PDF}" download>&#8595; Download the full course (PDF)</a>
-<span class="dl-note">— all 9 sessions, practice, and cheat sheets for offline reading.</span></p>
+<span class="dl-note">— all 10 sessions, practice, and cheat sheets for offline reading.</span></p>
 
 <h2>The sessions</h2>
 <div class="cards">{''.join(cards)}</div>
