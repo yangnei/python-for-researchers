@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>(function(){try{var k="lp.theme",t=localStorage.getItem(k);if(t!=="light"&&t!=="dark"){t="light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
-<title>Session 3 — Control Flow: Conditionals &amp; Loops</title>
+<title>Session 3 — Functions, Scope &amp; Recursion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
 </head>
 <body data-page="session-03">
-<header class="site"><div class="nav-inner"><a class="brand" href="index.html">Learn <span class="py">Python</span></a><nav class="nav-links"><a href="index.html">Home</a><a href="session-01.html" data-page="session-01" title="Running Python, Variables &amp; Types">S1</a><a href="session-02.html" data-page="session-02" title="The Dynamic-Typing Traps">S2</a><a href="session-03.html" class="active" data-page="session-03" title="Control Flow: Conditionals &amp; Loops">S3</a><a href="session-04.html" data-page="session-04" title="Data Structures">S4</a><a href="session-05.html" data-page="session-05" title="Functions, Scope &amp; Reusability">S5</a><a href="session-06.html" data-page="session-06" title="Recursion &amp; Recursive Thinking">S6</a><a href="session-07.html" data-page="session-07" title="Exceptions &amp; Defensive Code">S7</a><a href="session-08.html" data-page="session-08" title="Files, Libraries &amp; Research Data">S8</a><a href="session-09.html" data-page="session-09" title="Regular Expressions &amp; Text Cleaning">S9</a><a href="session-10.html" data-page="session-10" title="Modules, OOP &amp; the Pythonic Toolkit">S10</a><a href="cheatsheets.html">Cheat sheets</a><a class="dl" href="learn-python-student.pdf" download title="Download the whole course as a PDF">PDF&nbsp;&#8595;</a><button class="theme-toggle" type="button" aria-label="Switch light or dark theme" title="Switch light / dark"><span class="ti-moon" aria-hidden="true">&#9790;</span><span class="ti-sun" aria-hidden="true">&#9728;</span></button></nav></div></header>
+<header class="site"><div class="nav-inner"><a class="brand" href="index.html">Learn <span class="py">Python</span></a><nav class="nav-links"><a href="index.html">Home</a><a href="session-01.html" data-page="session-01" title="Running Python, Types &amp; the Type Traps">S1</a><a href="session-02.html" data-page="session-02" title="Control Flow &amp; Data Structures">S2</a><a href="session-03.html" class="active" data-page="session-03" title="Functions, Scope &amp; Recursion">S3</a><a href="session-04.html" data-page="session-04" title="Exceptions, Files &amp; Research Data">S4</a><a href="session-05.html" data-page="session-05" title="Regular Expressions, Modules &amp; OOP">S5</a><a href="cheatsheets.html">Cheat sheets</a><a class="dl" href="learn-python-student.pdf" download title="Download the whole course as a PDF">PDF&nbsp;&#8595;</a><button class="theme-toggle" type="button" aria-label="Switch light or dark theme" title="Switch light / dark"><span class="ti-moon" aria-hidden="true">&#9790;</span><span class="ti-sun" aria-hidden="true">&#9728;</span></button></nav></div></header>
 <main>
 
 <article>
@@ -42,212 +42,425 @@
 </main>
 <script type="text/markdown" id="lesson-md">
 # Session 3
-## Control Flow: Conditionals & Loops
+## Functions, Scope & Recursion
 
-Make decisions, and repeat work — the two halves of control flow.
+*Learn Python — a two-hour session, in two halves.*
 
----
-
-## Part 1 — Conditionals
-
-```python
-if score >= 90:
-    grade = "A"
-elif score >= 80:
-    grade = "B"
-else:
-    grade = "F"
-```
-
-Indentation defines the block. Only the **first** true branch runs.
+**Part A:** Functions, Scope & Reusability  ·  **Part B:** Recursion & Recursive Thinking
 
 ---
 
-## Comparison + chained comparisons
-
-`==`  `!=`  `<`  `<=`  `>`  `>=`
-
-```python
-0 <= score <= 100      # chained — reads like math
-```
-
-🧠 No need for `score >= 0 and score <= 100` — chain it.
+# Part A
+## Functions, Scope & Reusability
 
 ---
 
-## Logical operators (and the gotcha)
+## Defining & calling
 
 ```python
-passed and submitted     # both
-late or excused          # either
-not flagged              # negate
+def class_average(scores):
+    """Return the mean of a list of scores."""
+    return sum(scores) / len(scores)
+
+class_average([91, 58, 73])     # 74.0
 ```
 
-**Short-circuit:** `a and b` skips `b` if `a` is falsy.
-And `and`/`or` return an **operand, not a bool**:
-
-```python
-5 and 0        # 0
-"" or "N/A"    # "N/A"   ← default-value idiom
-```
-
-So write `if x:` — never `if x == True`.
+🧠 A function is a formula/coding-scheme: same input → same output.
 
 ---
 
-## Part 2 — Loops
+## return vs print
 
 ```python
-for s in scores:          # each element directly
-    print(s)
+def avg(xs): return sum(xs) / len(xs)   # hands value back
+def show(xs): print(sum(xs) / len(xs))  # just displays
 
-for i in range(5):        # 0,1,2,3,4
-    print(i)
+x = avg([1,2,3])     # x = 2.0
+y = show([1,2,3])    # prints 2.0, but y is None!
+```
 
-while not done:           # repeat until a condition flips
+`print` shows; `return` gives the value to the next step.
+
+---
+
+## Parameters: positional, keyword, default
+
+```python
+def grade(score, scale=100, passing=60):
     ...
+grade(85)                 # uses defaults
+grade(85, passing=50)     # keyword arg
 ```
 
-⚠️ `range(1, 5)` → `1,2,3,4` — **stop is excluded** (off-by-one!).
+⚠️ Defaults must be **immutable** (numbers, strings, `None`) — never `[]` or `{}`.
 
 ---
 
-## break / continue
+## *args / **kwargs
 
 ```python
-for x in data:
-    if x is None:
-        continue          # skip this one
-    if x == "STOP":
-        break             # leave the loop entirely
-    process(x)
+def total(*args):        # any number of positionals -> tuple
+    return sum(args)
+total(1, 2, 3)           # 6
+
+def tag(**kwargs):       # any number of keywords -> dict
+    return kwargs
+tag(name="Ana", gpa=3.9) # {'name':'Ana','gpa':3.9}
+
+func(*my_list)           # unpack list into args
+func(**my_dict)          # unpack dict into kwargs
 ```
 
 ---
 
-## Stop juggling indices: enumerate & zip
+## TRAP: mutable default argument 😱
 
 ```python
-for i, name in enumerate(names):       # index + value
-    print(i, name)
+def add_student(name, roster=[]):    # ❌
+    roster.append(name)
+    return roster
 
-for name, score in zip(names, scores): # two lists together
-    print(name, score)
+add_student("Ana")    # ['Ana']
+add_student("Ben")    # ['Ana', 'Ben']  — the list PERSISTS!
 ```
 
-🧠 If you write `range(len(x))`, stop — use `enumerate`/`zip`.
+The default `[]` is created **once**, at definition. Fix on next slide.
 
 ---
 
-## The validation loop (you'll reuse this everywhere)
+## The fix: default to None
 
 ```python
-while True:
-    raw = input("Score 0–100: ")
-    if raw.isdigit() and 0 <= int(raw) <= 100:
-        score = int(raw)
-        break
-    print("Try again.")
+def add_student(name, roster=None):   # ✅
+    if roster is None:
+        roster = []
+    roster.append(name)
+    return roster
 ```
+
+**Rule:** mutable default? Use `None` and create inside.
+
+---
+
+## Scope (LEGB) & globals
+
+Python looks up names: **L**ocal → **E**nclosing → **G**lobal → **B**uilt-in.
+
+```python
+count = 0
+def bump():
+    count = count + 1   # 💥 UnboundLocalError
+```
+Assigning `count` makes it local. Avoid `global`; **return** a value and reassign instead.
+
+---
+
+## Docstrings & type hints
+
+```python
+def class_average(scores: list[float]) -> float:
+    """Return the arithmetic mean of `scores`."""
+    return sum(scores) / len(scores)
+```
+
+Type hints document intent. **They are NOT enforced at runtime** (`mypy` checks them).
 
 ---
 
 ## Your turn
 
 `examples/session-03/practice.md`:
-1. Grade-band classifier — test the boundaries (89.999 / 90 / 90.001).
-2. Average a roster and label each student PASS/FAIL with `zip`.
-3. A robust "ask until valid" loop.
+1. A small grade-functions module (with docstrings + hints).
+2. Reproduce the mutable-default bug, then fix it.
+3. `summary(*scores)` using `*args`.
 
 ---
 
 ## Traps recap
 
-- `if x == True` → just `if x:`; use `x is None` (not `== None`).
-- `=` (assign) vs `==` (compare) — classic typo.
-- `range(1, 5)` excludes 5; test your boundaries.
-- Don't modify a list while looping it; prefer `enumerate`/`zip` over `range(len(...))`.
-
-*(More in the cheat sheet: `match`/`case`, the ternary, `for/else`.)*
+- Mutable default arg → use `None`.
+- `print` ≠ `return` (forgot return → `None`).
+- Assigning a global inside a function → `UnboundLocalError`.
+- Type hints aren't enforced.
 
 ## Summary
-You can branch and repeat cleanly.
-**Next:** the containers you loop over — lists, dicts, sets.
+You can write reusable, documented, reproducible functions.
+**Next:** *Part B of this session* — recursion.
+
+---
+
+# Part B
+## Recursion & Recursive Thinking
+
+---
+
+## The shape of every recursion
+
+```python
+def countdown(n):
+    if n <= 0:          # BASE CASE — when to stop
+        print("liftoff!")
+        return
+    print(n)
+    countdown(n - 1)    # RECURSIVE CASE — same problem, smaller input
+```
+
+Two parts, always:
+- a **base case** that stops, and
+- a **recursive case** that moves *toward* the base case.
+
+---
+
+## Trace the call stack
+
+```python
+factorial(3)
+= 3 * factorial(2)
+=     3 * (2 * factorial(1))
+=         3 * (2 * 1)        # base case returns 1
+= 6
+```
+
+Each call waits on the one inside it. The calls stack up, then unwind.
+
+🧠 Each pending call is a **stack frame** — that matters in a moment.
+
+---
+
+## Recursion vs iteration
+
+```python
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)   # ← must RETURN the call
+
+def factorial_loop(n):
+    total = 1
+    for k in range(2, n + 1):
+        total *= k
+    return total
+```
+
+Same answer. For flat counting, the **loop** is usually clearer.
+
+---
+
+## Where recursion shines: nested data
+
+```python
+def deep_sum(obj):
+    if isinstance(obj, (int, float)):
+        return obj
+    if isinstance(obj, dict):
+        return sum(deep_sum(v) for v in obj.values())
+    if isinstance(obj, (list, tuple)):
+        return sum(deep_sum(x) for x in obj)
+    return 0
+
+deep_sum([1, [2, [3, 4]], {"a": 6}])   # 16
+```
+
+Nested JSON, folder trees, threaded replies — a single loop can't reach all the way down. Recursion can.
+
+---
+
+## The trap: no base case
+
+```python
+def runaway(n):
+    return runaway(n + 1)     # never stops
+```
+
+```
+RecursionError: maximum recursion depth exceeded
+```
+
+Python has **no tail-call optimization** — every call keeps its frame
+(default limit ≈ 1000). Deep recursion *will* hit the ceiling.
+
+---
+
+## Your turn
+
+`examples/session-03/practice.md`:
+1. Recursive `rsum(n)` — name the base case first.
+2. `flatten([1, [2, [3, 4]], 5])` → one flat list.
+3. `depth(...)` — how deeply is a list nested?
+
+---
+
+## Traps recap
+
+- Every recursion needs a **reachable base case**, or it overflows the stack.
+- **Return** the recursive call — forgetting to gives you a silent `None`.
+- Recursion isn't free: each call costs a stack frame (no tail-call optimization).
+- A plain **loop** is better for flat sequences and for very deep work.
+
+## Summary
+You can solve problems that are defined in terms of themselves — especially nested data.
+**Next:** Exceptions, files & research data.
 
 </script>
 <script type="text/markdown" id="practice-md">
-# Session 3 — Practice (60 min): Conditionals & Loops
+# Session 3 — Practice: Functions & Recursion
 
-## Task 1 — Grade-band classifier
-Write `letter_grade(score)` returning A/B/C/D/F (90/80/70/60 cutoffs), `"Invalid"` outside 0–100.
-**Test the boundaries:** 90, 89.999, 0, 100, -5, 101.
+This 2-hour session has two halves. Do **Part A** after the first topic, **Part B** after the second. Predict every output before you run it.
 
-## Task 2 — Boolean logic
-1. What is `5 and 0`? `"" or "N/A"`? Why aren't they `True`/`False`?
-2. Rewrite `if attended == True:` the Pythonic way.
+## Part A — Functions, Scope & Reusability
 
-## Task 3 — Average + pass/fail (loops)
-Given `names = ["Ana","Ben","Cara","Dev"]` and `scores = [91, 58, 73, 64]`:
-1. Compute the mean with a loop and a running total.
-2. Use `zip` to print `"<name>: PASS"` (≥60) or `"<name>: FAIL"`.
-3. Count the passes with `sum(s >= 60 for s in scores)`.
+### Task 1 — Grade-functions module
+Write three functions with docstrings and type hints:
+- `class_average(scores: list[float]) -> float`
+- `letter_grade(score: float) -> str`  (reuse Session 3)
+- `pass_rate(scores: list[float], passing: float = 60) -> float`  (fraction passing, 0–1)
 
-## Task 4 — Validation loop
-Write a real `while True:` prompt that keeps asking until the user types an integer 0–100.
+Use bool-summing for `pass_rate` (recall `sum(s >= passing for s in scores)`).
 
-## Task 5 — Trap check
-Why does this skip elements, and what's the fix?
-```python
-xs = [1, 2, 3, 4]
-for x in xs:
-    if x % 2 == 0:
-        xs.remove(x)
-```
+### Task 2 — Reproduce & fix the mutable-default bug
+Write `add_note(text, notes=[])` that appends and returns. Call it three times and watch
+the list grow. Then fix it with the `None` pattern and prove each call starts fresh.
 
-## Bonus — Pythonic idiom drill
+### Task 3 — *args summary
+Write `summary(*scores)` that returns a dict `{"n":..., "mean":..., "max":..., "min":...}`.
+Call it both as `summary(91, 58, 73)` and as `summary(*my_list)`.
+
+### Bonus — Pythonic idiom drill
 Cover the `# ->` answers, predict each line, then run.
 
 ```python
-nums = [80, 92, 45]
-print(all(n >= 60 for n in nums))    # -> False   (45 fails)
-print(any(n >= 90 for n in nums))    # -> True    (92 passes)
-print(92 in nums, 60 in nums)        # -> True False
+def f(a, *, b):          # everything after * is keyword-only
+    return a, b
+print(f(1, b=2))                     # -> (1, 2)
+print(f(**{"a": 1, "b": 9}))         # -> (1, 9)   (** unpacks a dict into arguments)
+```
+
+## Part B — Recursion & Recursive Thinking
+
+### Task 1 — Recursive sum
+Write `rsum(n)` that adds `1 + 2 + ... + n` **with recursion** (no loop).
+Name the base case out loud before you write it. Test `rsum(5)` and `rsum(0)`.
+
+### Task 2 — Recursion vs iteration
+Write `reverse(s)` that reverses a string recursively. Then write the loop version.
+Which reads more clearly to you? Test `reverse("data")`.
+
+### Task 3 — Flatten nested data
+Write `flatten(xs)` that turns a list-of-lists (nested to any depth) into one flat list:
+`flatten([1, [2, [3, 4]], 5])` → `[1, 2, 3, 4, 5]`. This is the move for nested JSON/exports.
+
+### Task 4 — How deep does it go?
+Write `depth(xs)` returning how deeply a list is nested:
+`depth([1, [2, [3, [4]]]])` → `4`, `depth([1, 2, 3])` → `1`, `depth(5)` → `0`.
+
+### Task 5 — Trap check
+1. Why does this raise `RecursionError`, and what's the fix?
+   ```python
+   def f(n):
+       return n + f(n - 1)
+   ```
+2. This returns `None` instead of a number — why?
+   ```python
+   def fact(n):
+       if n <= 1:
+           return 1
+       n * fact(n - 1)
+   ```
+3. Name one case where a plain loop is the better choice over recursion.
+
+### Bonus — Pythonic idiom drill
+One decorator makes exponential recursion instant by remembering past calls.
+
+```python
+import functools
+
+@functools.cache                     # memoize: each n is computed once
+def fib(n):
+    return n if n < 2 else fib(n - 1) + fib(n - 2)
+print(fib(35))                       # -> 9227465   (try this WITHOUT @cache... then wait)
 ```
 
 ---
 
 <details><summary>Show solutions</summary>
 
+### Part A — Functions, Scope & Reusability
+
+```python
+def class_average(scores: list[float]) -> float:
+    """Mean of scores."""
+    return sum(scores) / len(scores)
+
+def letter_grade(score: float) -> str:
+    """A/B/C/D/F by 90/80/70/60 cutoffs."""
+    for cutoff, letter in [(90,"A"),(80,"B"),(70,"C"),(60,"D")]:
+        if score >= cutoff:
+            return letter
+    return "F"
+
+def pass_rate(scores: list[float], passing: float = 60) -> float:
+    """Fraction of scores >= passing (0..1)."""
+    return sum(s >= passing for s in scores) / len(scores)
+
+# Task 2
+def add_note(text, notes=None):     # fixed version
+    if notes is None:
+        notes = []
+    notes.append(text)
+    return notes
+
+# Task 3
+def summary(*scores):
+    return {"n": len(scores), "mean": sum(scores)/len(scores),
+            "max": max(scores), "min": min(scores)}
+print(summary(91, 58, 73))
+print(summary(*[91, 58, 73]))
+```
+
+### Part B — Recursion & Recursive Thinking
+
 ```python
 # 1
-def letter_grade(score):
-    if not 0 <= score <= 100: return "Invalid"
-    for cutoff, g in [(90,"A"),(80,"B"),(70,"C"),(60,"D")]:
-        if score >= cutoff: return g
-    return "F"
-# 90->A, 89.999->B, 0->F, 100->A, -5->Invalid, 101->Invalid
+def rsum(n):
+    if n == 0:                      # base case
+        return 0
+    return n + rsum(n - 1)
+print(rsum(5), rsum(0))             # 15 0
 
 # 2
-# 5 and 0 -> 0 ; "" or "N/A" -> "N/A"  (and/or return an operand, not a bool)
-result = "pass" if attended else "absent"     # and just `if attended:`
+def reverse(s):
+    if s == "":                     # base case: empty string
+        return ""
+    return reverse(s[1:]) + s[0]    # all-but-first, reversed, then first
+print(reverse("data"))             # "atad"
+# loop version: "".join(reversed(s))  — usually clearer for flat strings
 
 # 3
-total = 0
-for s in scores: total += s
-print(total / len(scores))                    # 71.5
-for name, score in zip(names, scores):
-    print(f"{name}: {'PASS' if score >= 60 else 'FAIL'}")
-print("passes:", sum(s >= 60 for s in scores))   # 3
+def flatten(xs):
+    out = []
+    for x in xs:
+        if isinstance(x, list):
+            out.extend(flatten(x))  # recurse into the sub-list
+        else:
+            out.append(x)
+    return out
+print(flatten([1, [2, [3, 4]], 5]))   # [1, 2, 3, 4, 5]
 
 # 4
-while True:
-    raw = input("Score 0–100: ")
-    if raw.isdigit() and 0 <= int(raw) <= 100:
-        print("Got", int(raw)); break
-    print("Try again.")
+def depth(xs):
+    if not isinstance(xs, list):
+        return 0                              # a non-list has no nesting
+    return 1 + max((depth(x) for x in xs), default=0)
+print(depth([1, [2, [3, [4]]]]), depth([1, 2, 3]), depth(5))   # 4 1 0
 
-# 5  Removing while iterating shifts indices, so elements get skipped.
-xs = [x for x in xs if x % 2 != 0]            # build a new list instead -> [1, 3]
+# 5
+# 1) No reachable base case -> the calls never stop -> stack overflows.
+#    Fix: add `if n == 0: return 0` (or n <= 0) at the top.
+# 2) The recursive case computes n*fact(n-1) but never RETURNs it,
+#    so the function falls off the end and returns None. Add `return`.
+# 3) A loop is better when the work is a simple flat sequence, or when the
+#    depth could exceed ~1000 (Python has no tail-call optimization, so deep
+#    recursion hits RecursionError where a loop would be fine).
 ```
 
 
@@ -255,23 +468,30 @@ xs = [x for x in xs if x % 2 != 0]            # build a new list instead -> [1, 
 
 </script>
 <script type="text/markdown" id="quiz-md">
-### Quiz — Control Flow: Conditionals & Loops
-1. Rewrite `if x >= 90 and x < 100:` using a chained comparison.
-2. What is `5 and 0`? What is `0 or "hi"`? Why aren't they `True`/`False`?
-3. Why is `if passed == True:` not ideal? Write the better version.
-4. What does `list(range(1, 5))` produce?
-5. Why can removing items from a list *while looping it* go wrong, and what's a clean fix?
+### Quiz — Functions, Scope & Recursion
+*Part A — Functions & Scope*
+1. What's the difference between `return` and `print`?
+2. Why is `def f(x, items=[])` dangerous? What's the fix?
+3. What does a function with no `return` statement return? Are type hints enforced at runtime?
+
+*Part B — Recursion*
+4. What two parts must every recursive function have?
+5. What error comes from a base case that's never reached, and why doesn't Python just keep going?
+6. Why is recursion a natural fit for nested data (a list of lists, or nested JSON)?
 
 <details><summary>Show answers</summary>
 
-**Answers:** 1. `if 90 <= x < 100:`. 2. `0` and `"hi"` — `and`/`or` return an operand, not a
-bool. 3. `passed` is already a bool; write `if passed:`. 4. `[1, 2, 3, 4]` (5 excluded).
-5. Removing shifts indices so the loop skips elements; iterate a copy or build a new list
-(`[x for x in xs if keep(x)]`).
+**Answers:** 1. `return` hands a value to the caller; `print` only displays. 2. The default list is
+created once and persists across calls; use `items=None` then create inside. 3. `None`; and no —
+type hints are documentation (`mypy` checks them optionally). 4. A **base case** (stops) and a
+**recursive case** (calls itself on a smaller input, toward the base case). 5. `RecursionError` —
+Python has no tail-call optimization, so each pending call keeps a stack frame until the limit
+(~1000). 6. The data is *defined in terms of itself* (a list may contain lists), so a function
+defined in terms of itself mirrors its shape and can reach every level.
 
 </details>
 </script>
-<script type="application/json" id="playgrounds-data">[{"title": "grades_and_logic.py", "code": "def letter_grade(score):\n    if not 0 <= score <= 100:        # chained comparison\n        return \"Invalid\"\n    for cutoff, letter in [(90, \"A\"), (80, \"B\"), (70, \"C\"), (60, \"D\")]:\n        if score >= cutoff:\n            return letter\n    return \"F\"\n\nfor s in [95, 90, 89.999, 60, 59, 120]:\n    print(s, \"->\", letter_grade(s))\n\nprint(\"5 and 0     =\", 5 and 0)        # and/or return an operand\nprint(\"'' or 'N/A' =\", \"\" or \"N/A\")    # default-value idiom\n"}, {"title": "enumerate_zip.py", "code": "names  = [\"Ana\", \"Ben\", \"Cara\", \"Dev\"]\nscores = [91, 58, 73, 64]\n\nfor i, name in enumerate(names, start=1):     # index + value\n    print(i, name)\n\nprint(\"---\")\nfor name, score in zip(names, scores):        # two lists together\n    print(f\"{name}: {'PASS' if score >= 60 else 'FAIL'}\")\n\nprint(\"passes:\", sum(s >= 60 for s in scores))  # bools sum!\nprint(\"all pass?\", all(s >= 60 for s in scores)) # any()/all() over a generator\nprint(\"any fail?\", any(s < 60 for s in scores))\n"}]</script>
+<script type="application/json" id="playgrounds-data">[{"title": "mutable_default_bug.py", "code": "def add_bad(name, roster=[]):     # BUG: default list is shared across calls\n    roster.append(name)\n    return roster\n\nprint(\"BUGGY:\", add_bad(\"Ana\"))   # ['Ana']\nprint(\"BUGGY:\", add_bad(\"Ben\"))   # ['Ana', 'Ben']  <- persists!\n\ndef add_ok(name, roster=None):    # FIX: default None, create inside\n    if roster is None:\n        roster = []\n    roster.append(name)\n    return roster\n\nprint(\"FIXED:\", add_ok(\"Ana\"))    # ['Ana']\nprint(\"FIXED:\", add_ok(\"Ben\"))    # ['Ben']\n\ndef report(name, *, verbose=False):    # everything after * is keyword-only\n    return f\"{name} (full)\" if verbose else name\nprint(\"kw-only: \", report(\"Ana\", verbose=True))\nprint(\"**unpack:\", report(**{\"name\": \"Ben\", \"verbose\": False}))   # ** spreads a dict\n"}, {"title": "recursion.py", "code": "# Recursion = base case (stop) + recursive case (smaller problem). Predict, then Run.\ndef factorial(n):\n    if n <= 1:                 # BASE CASE\n        return 1\n    return n * factorial(n - 1)   # RECURSIVE CASE (remember to return!)\n\nprint(\"factorial(5):\", factorial(5))\n\n# Recursion shines on NESTED data, where a single loop can't reach all the way down.\ndef deep_sum(obj):\n    if isinstance(obj, bool):              # bool is an int subclass (Session 2!)\n        return 0\n    if isinstance(obj, (int, float)):\n        return obj\n    if isinstance(obj, (list, tuple)):\n        return sum(deep_sum(x) for x in obj)\n    if isinstance(obj, dict):\n        return sum(deep_sum(v) for v in obj.values())\n    return 0\n\nnested = [1, [2, 3, [4, 5]], {\"a\": 6, \"b\": [7, 8]}]\nprint(\"deep_sum:\", deep_sum(nested))   # 1+2+3+4+5+6+7+8 = 36\n\n# Memoization: @cache remembers past calls, turning exponential fibonacci into instant.\nimport functools\n@functools.cache\ndef fib(n):\n    return n if n < 2 else fib(n - 1) + fib(n - 2)\nprint(\"fib(35):\", fib(35))             # 9227465 \u2014 try removing @cache, then wait...\n\n# Missing base case -> infinite recursion -> RecursionError. Uncomment to see it:\n# def oops(n): return oops(n + 1)\n# oops(0)\n"}]</script>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 <script src="assets/app.js"></script>

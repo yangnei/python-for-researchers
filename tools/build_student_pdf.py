@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 
 # Sessions that have a lesson deck + practice file (capstone is an appendix).
-N_SESSIONS = 10
+N_SESSIONS = 5
 
 _LIST_RE = re.compile(r"^\s*(?:[-*+]\s|\d+\.\s)")
 
@@ -97,7 +97,7 @@ COVER = f"""
   <div class="sub">Learn Python</div>
   <h1>Student Edition</h1>
   <div class="rule"></div>
-  <p style="font-size:12pt;color:#33415c">10 two-hour sessions · runnable examples ·
+  <p style="font-size:12pt;color:#33415c">5 two-hour sessions + capstone · runnable examples ·
      trap cheat sheets · self-check quizzes</p>
   <div class="meta">
      An accelerated, self-study Python course<br>

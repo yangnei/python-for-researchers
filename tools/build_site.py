@@ -19,20 +19,21 @@ ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 
 SESSIONS = [
-    (1, "Running Python, Variables & Types", "Run code; the 5 core types; input/output & f-strings.", False),
-    (2, "The Dynamic-Typing Traps", "== vs is, True==1, float precision, 5=='5'.", False),
-    (3, "Control Flow: Conditionals & Loops", "if/elif/else, chained comparisons, for/while, break, enumerate, zip.", False),
-    (4, "Data Structures", "list/tuple/dict/set, comprehensions, sorting, aliasing.", False),
-    (5, "Functions, Scope & Reusability", "params, *args/**kwargs, scope, the mutable-default bug.", False),
-    (6, "Recursion & Recursive Thinking", "base case + recursive case, the call stack, recursion vs iteration, recursing nested data.", False),
-    (7, "Exceptions & Defensive Code", "try/except, raising, validating dirty research data.", False),
-    (8, "Files, Libraries & Research Data", "open/with, CSV, statistics, the pandas teaser.", False),
-    (9, "Regular Expressions & Text Cleaning", "patterns, groups, re.search/sub, raw strings; validate & extract research text.", False),
-    (10, "Modules, OOP & the Pythonic Toolkit", "import modules; a class with @property; generators/map/filter/walrus.", False),
+    (1, "Running Python, Types & the Type Traps",
+     "Run code & the core types; then == vs is, True==1, float precision, 5=='5'.", False),
+    (2, "Control Flow & Data Structures",
+     "if/elif/else, chained comparisons, for/while, enumerate/zip; list/tuple/dict/set, comprehensions, aliasing.", False),
+    (3, "Functions, Scope & Recursion",
+     "params, *args/**kwargs, scope, the mutable-default bug; base/recursive case, the call stack, nested data.", False),
+    (4, "Exceptions, Files & Research Data",
+     "try/except, raising, validating dirty input; open/with, CSV, statistics, the pandas teaser.", False),
+    (5, "Regular Expressions, Modules & OOP",
+     "patterns, groups, re.sub; import modules, a class with @property, generators/map/filter/walrus.", False),
 ]
 
-# Editable, in-browser-runnable snippets per session (Pyodide-safe: no file I/O, no input()).
-PLAYGROUNDS: dict[int, list[dict]] = {
+# Editable, in-browser-runnable snippets per TOPIC (Pyodide-safe: no file I/O, no input()).
+# These keys are the original 10 topics; they're merged onto the 5 two-hour sessions below.
+_TOPIC_PLAYGROUNDS: dict[int, list[dict]] = {
     1: [{"title": "types_and_fstrings.py", "code": '''\
 # Edit me, then press Run. Predict the output first!
 name = "Ada"
@@ -310,6 +311,12 @@ print("fib(35):", fib(35))             # 9227465 — try removing @cache, then w
 '''}],
 }
 
+# Merge the per-topic snippets onto the five 2-hour sessions (each = two topics).
+PLAYGROUNDS: dict[int, list[dict]] = {
+    n: _TOPIC_PLAYGROUNDS.get(a, []) + _TOPIC_PLAYGROUNDS.get(b, [])
+    for n, (a, b) in {1: (1, 2), 2: (3, 4), 3: (5, 6), 4: (7, 8), 5: (9, 10)}.items()
+}
+
 CDN = {
     "marked": "https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js",
     "hljs_js": "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js",
@@ -466,7 +473,7 @@ def build_index() -> str:
 <span class="o">False</span></pre>
   </figure>
   <p class="dl-line"><a class="dl-btn" href="{STUDENT_PDF}" download>&#8595; Download the full course (PDF)</a>
-  <span class="dl-note">— all 10 sessions, practice, and cheat sheets for offline reading.</span></p>
+  <span class="dl-note">— all sessions, practice, and cheat sheets for offline reading.</span></p>
 </section>
 
 <h2 class="sec">The sessions</h2>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>(function(){try{var k="lp.theme",t=localStorage.getItem(k);if(t!=="light"&&t!=="dark"){t="light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
-<title>Session 4 — Data Structures</title>
+<title>Session 4 — Exceptions, Files &amp; Research Data</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Space+Grotesk:wght@500;600;700&display=swap">
@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
 </head>
 <body data-page="session-04">
-<header class="site"><div class="nav-inner"><a class="brand" href="index.html">Learn <span class="py">Python</span></a><nav class="nav-links"><a href="index.html">Home</a><a href="session-01.html" data-page="session-01" title="Running Python, Variables &amp; Types">S1</a><a href="session-02.html" data-page="session-02" title="The Dynamic-Typing Traps">S2</a><a href="session-03.html" data-page="session-03" title="Control Flow: Conditionals &amp; Loops">S3</a><a href="session-04.html" class="active" data-page="session-04" title="Data Structures">S4</a><a href="session-05.html" data-page="session-05" title="Functions, Scope &amp; Reusability">S5</a><a href="session-06.html" data-page="session-06" title="Recursion &amp; Recursive Thinking">S6</a><a href="session-07.html" data-page="session-07" title="Exceptions &amp; Defensive Code">S7</a><a href="session-08.html" data-page="session-08" title="Files, Libraries &amp; Research Data">S8</a><a href="session-09.html" data-page="session-09" title="Regular Expressions &amp; Text Cleaning">S9</a><a href="session-10.html" data-page="session-10" title="Modules, OOP &amp; the Pythonic Toolkit">S10</a><a href="cheatsheets.html">Cheat sheets</a><a class="dl" href="learn-python-student.pdf" download title="Download the whole course as a PDF">PDF&nbsp;&#8595;</a><button class="theme-toggle" type="button" aria-label="Switch light or dark theme" title="Switch light / dark"><span class="ti-moon" aria-hidden="true">&#9790;</span><span class="ti-sun" aria-hidden="true">&#9728;</span></button></nav></div></header>
+<header class="site"><div class="nav-inner"><a class="brand" href="index.html">Learn <span class="py">Python</span></a><nav class="nav-links"><a href="index.html">Home</a><a href="session-01.html" data-page="session-01" title="Running Python, Types &amp; the Type Traps">S1</a><a href="session-02.html" data-page="session-02" title="Control Flow &amp; Data Structures">S2</a><a href="session-03.html" data-page="session-03" title="Functions, Scope &amp; Recursion">S3</a><a href="session-04.html" class="active" data-page="session-04" title="Exceptions, Files &amp; Research Data">S4</a><a href="session-05.html" data-page="session-05" title="Regular Expressions, Modules &amp; OOP">S5</a><a href="cheatsheets.html">Cheat sheets</a><a class="dl" href="learn-python-student.pdf" download title="Download the whole course as a PDF">PDF&nbsp;&#8595;</a><button class="theme-toggle" type="button" aria-label="Switch light or dark theme" title="Switch light / dark"><span class="ti-moon" aria-hidden="true">&#9790;</span><span class="ti-sun" aria-hidden="true">&#9728;</span></button></nav></div></header>
 <main>
 
 <article>
@@ -42,223 +42,433 @@
 </main>
 <script type="text/markdown" id="lesson-md">
 # Session 4
-## Data Structures: list · tuple · dict · set
+## Exceptions, Files & Research Data
 
-The containers that hold your data.
+*Learn Python — a two-hour session, in two halves.*
 
----
-
-## Four containers, four jobs
-
-| Type | Syntax | Mutable? | Use for |
-|---|---|---|---|
-| `list` | `[1, 2, 3]` | yes | ordered, changing collection |
-| `tuple` | `(1, 2)` | no | fixed record / coordinates |
-| `dict` | `{"k": v}` | yes | key → value lookup |
-| `set` | `{1, 2, 3}` | yes | unique items |
+**Part A:** Exceptions & Defensive Code  ·  **Part B:** Files, Libraries & Research Data
 
 ---
 
-## Lists & slicing
+# Part A
+## Exceptions & Defensive Code
+
+---
+
+## try / except
 
 ```python
-xs = [10, 20, 30, 40]
-xs[0]      # 10     xs[-1]   # 40 (last)
-xs[1:3]    # [20, 30]   (stop excluded)
-xs[:2]     # [10, 20]
-xs[::-1]   # reversed
-xs.append(50); xs.sort()      # mutate in place
+try:
+    n = int(value)
+except ValueError:
+    n = None        # handle the bad case
 ```
 
-⚠️ `xs.sort()` returns **None** — it sorts in place. Use `sorted(xs)` for a new list.
+When code might fail at runtime, wrap it. The `except` catches the named error.
 
 ---
 
-## Dicts = labeled records
+## Common exception types
+
+| Exception | Happens when |
+|---|---|
+| `ValueError` | right type, bad value: `int("N/A")` |
+| `TypeError` | wrong type: `5 > "5"` |
+| `KeyError` | missing dict key: `d["nope"]` |
+| `IndexError` | bad list index: `xs[99]` |
+| `ZeroDivisionError` | `x / 0` |
+| `FileNotFoundError` | `open("missing.csv")` |
+
+---
+
+## try / except / else / finally
 
 ```python
-student = {"name": "Ana", "gpa": 3.9}
-student["name"]              # "Ana"
-student.get("major", "N/A")  # safe access with default
-student["major"] = "Ed"      # add/update
-for key, val in student.items(): ...
+try:
+    n = int(value)
+except ValueError:
+    print("not a number")
+else:
+    print("ok:", n)      # only if NO exception
+finally:
+    print("always runs")  # cleanup
 ```
 
 ---
 
-## A list of dicts = a dataset 🧠
+## Raise your own
 
 ```python
-roster = [
-    {"name": "Ana", "score": 91},
-    {"name": "Ben", "score": 58},
-]
+def clean_likert(n):
+    if not 1 <= n <= 5:
+        raise ValueError(f"{n} not in 1–5")
+    return n
 ```
 
-Each dict = a **row/respondent**; each key = a **variable/column**.
-This is your tidy dataset until pandas shows up (Session 8).
+`raise` throws an exception on purpose — caller decides how to handle it.
 
 ---
 
-## Sets: unique, fast membership
+## EAFP vs LBYL
 
 ```python
-answers = ["yes", "no", "yes", "maybe", "no"]
-set(answers)            # {'yes', 'no', 'maybe'}  — dedup
-"yes" in set(answers)   # True, very fast
+# LBYL — "look before you leap"
+if value.isdigit():
+    n = int(value)
+
+# EAFP — "easier to ask forgiveness" (Pythonic)
+try:
+    n = int(value)
+except ValueError:
+    n = None
 ```
 
-Great for "distinct responses" and "have I seen this ID?"
+Both valid. EAFP shines when "checking first" is hard or racy.
 
 ---
 
-## Comprehensions
+## assert (developer check, not validation)
 
 ```python
-[s["score"] for s in roster]                 # list
-[s for s in roster if s["score"] >= 60]      # with filter
-{s["name"]: s["score"] for s in roster}      # dict
-{s["score"] // 10 for s in roster}           # set of score-decades
+assert len(scores) > 0, "scores must not be empty"
 ```
 
-Read as: *expr, for each item, (optionally) if condition.*
+For *your* sanity checks while developing. Can be disabled (`python -O`),
+so **never** use `assert` to validate untrusted input — use `raise`.
 
 ---
 
-## Sorting with a key
+## A first test with pytest
 
 ```python
-sorted(roster, key=lambda s: s["score"])               # ascending
-sorted(roster, key=lambda s: s["score"], reverse=True) # descending
+# clean.py
+def clean_likert(n):
+    if not 1 <= n <= 5:
+        raise ValueError("1–5 only")
+    return n
+
+# test_clean.py
+import pytest
+from clean import clean_likert
+
+def test_valid():    assert clean_likert(3) == 3
+def test_invalid():
+    with pytest.raises(ValueError):
+        clean_likert(9)
 ```
-
-`lambda s: s["score"]` = "sort by the score field."
-
----
-
-## TRAP: aliasing (labels, not boxes)
-
-```python
-a = [1, 2, 3]
-b = a                # SAME list
-a.append(4)
-b                    # [1, 2, 3, 4]  😱
-
-b = a.copy()         # ✅ independent copy
-```
-
-`[[0]*3]*3` makes 3 references to ONE row — use `[[0]*3 for _ in range(3)]`.
+Run: `pytest`
 
 ---
 
 ## Your turn
 
 `examples/session-04/practice.md`:
-1. Build the roster (list of dicts); sort by score.
-2. `{name: score}` dict comprehension.
-3. Group students into pass/fail buckets.
-4. Demonstrate the aliasing trap and fix it.
+1. `safe_int(value)` returning int or None.
+2. Clean a dirty survey list, collecting good values + a rejection log.
+3. Write one `pytest` test.
 
 ---
 
 ## Traps recap
 
-- `=` aliases; use `.copy()` / `copy.deepcopy()`.
-- `.sort()` returns None (in place); `sorted()` returns new.
-- list ≠ tuple even with same contents (Session 2).
-- `dict.get(key, default)` avoids `KeyError`.
+- **Never** bare `except:` — name the exception.
+- Don't catch too broadly or swallow errors silently.
+- `assert` ≠ input validation (use `raise`).
+- Catch the *specific* error you expect.
 
 ## Summary
-You can store, look up, dedup, sort, and reshape data.
-**Next:** package logic into reusable functions.
+You can validate messy input and fail loudly when you should.
+**Next:** *Part B of this session* — files & research data.
+
+---
+
+# Part B
+## Files, Libraries & Research Data
+
+---
+
+## Opening files with `with`
+
+```python
+with open("notes.txt") as f:
+    text = f.read()
+# file auto-closes here, even if the code crashes
+```
+
+`with` = a context manager: sets up and tears down the resource for you.
+Always prefer it to a bare `open()`/`close()`.
+
+---
+
+## File modes (mind the trap)
+
+| Mode | Meaning |
+|---|---|
+| `"r"` | read (default) |
+| `"w"` | write — **truncates the file to empty first!** |
+| `"a"` | append |
+| `"r+"` | read + write |
+
+⚠️ Open the wrong file with `"w"` → its contents are gone.
+
+---
+
+## Reading text
+
+```python
+with open("notes.txt") as f:
+    whole = f.read()           # one big string
+    # or
+    for line in f:             # line by line (memory-friendly)
+        print(line.rstrip())
+```
+
+⚠️ A file object is exhausted after one pass — re-open to read again.
+
+---
+
+## CSV in, as dicts 🧠
+
+```python
+import csv
+with open("students.csv", newline="") as f:
+    for row in csv.DictReader(f):
+        print(row["name"], row["score"])   # row is a dict keyed by header
+```
+
+`csv.DictReader` turns each row into a dict — your "list of dicts" dataset from Session 4.
+(`newline=""` avoids blank rows on Windows.)
+
+---
+
+## CSV out
+
+```python
+with open("summary.csv", "w", newline="") as f:
+    w = csv.DictWriter(f, fieldnames=["name", "score"])
+    w.writeheader()
+    w.writerow({"name": "Ana", "score": 91})
+```
+
+---
+
+## Libraries a researcher reaches for
+
+```python
+import statistics
+statistics.mean(xs); statistics.median(xs); statistics.stdev(xs)
+
+import random
+random.choice(xs); random.randint(1, 6); random.shuffle(xs)
+
+from datetime import date
+date.today()
+
+from pathlib import Path
+Path("students.csv").exists()
+```
+
+`pip install <package>` for third-party libs.
+
+---
+
+## The pandas teaser (your next course)
+
+```python
+import pandas as pd
+df = pd.read_csv("students.csv")
+df["score"].describe()      # count, mean, std, min, quartiles, max
+df.groupby("major")["score"].mean()
+```
+
+Everything you did by hand today — in three lines.
+We learned the fundamentals *underneath* it first.
+
+---
+
+## Your turn
+
+`examples/session-04/practice.md` (uses `survey.csv`):
+1. Read `students.csv`; print class mean with `statistics.mean`.
+2. Compute per-item survey means; write `survey_summary.csv`.
+
+---
+
+## Traps recap
+
+- `"w"` silently overwrites — be sure of the filename.
+- `csv` module → open with `newline=""`.
+- Files exhaust after one read; re-open to re-read.
+- Specify `encoding="utf-8"` for non-ASCII text.
+
+## Summary
+You can load, summarize, and write real research data.
+**Next:** Regular expressions, modules & OOP.
 
 </script>
 <script type="text/markdown" id="practice-md">
-# Session 4 — Practice (60 min)
+# Session 4 — Practice: Exceptions, Files & Research Data
 
-Start from:
-```python
-roster = [
-    {"name": "Ana", "score": 91}, {"name": "Ben", "score": 58},
-    {"name": "Cara", "score": 73}, {"name": "Dev", "score": 64},
-]
-```
+This 2-hour session has two halves. Do **Part A** after the first topic, **Part B** after the second. Predict every output before you run it.
 
-## Task 1 — Rank
-Print names sorted by score, highest first.
+## Part A — Exceptions & Defensive Code
 
-## Task 2 — Map (dict comprehension)
-Build `{name: score}` in one line.
+### Task 1 — `safe_int`
+Write `safe_int(value)` returning `int(value)` or `None` on failure. Test on
+`"42"`, `"N/A"`, `""`, `None`, `3.0`.
 
-## Task 3 — Group
-Build `{"pass": [...names...], "fail": [...names...]}` using a loop.
+### Task 2 — Clean a survey column
+Given `raw = ["5","3","N/A","7","","1","two","4"]`, produce:
+- `clean` — list of valid Likert ints (1–5), and
+- `rejected` — list of `(value, reason)` pairs.
+Use a `clean_likert(n)` that **raises** `ValueError` for out-of-range or non-ints.
 
-## Task 4 — Dedup
-From `["A","B","A","C","B"]`, get the distinct values and how many there are.
+### Task 3 — Write a test
+Put `clean_likert` in `clean.py` and write `test_clean.py` with pytest:
+one passing case and one `pytest.raises(ValueError)` case. Run `pytest`.
 
-## Task 5 — Aliasing
-Show that `b = roster` then `roster.append({...})` also changes `b`. Then make `b` an
-independent copy so it doesn't. (Hint: nested dicts → `copy.deepcopy`.)
+### Task 4 — Discuss
+Why is `except:` (bare) dangerous? Give one error it would hide that you'd rather see.
 
-## Bonus — Pythonic idiom drill
+### Bonus — Pythonic idiom drill
 Cover the `# ->` answers, predict each line, then run.
 
 ```python
-head, *tail = [10, 20, 30, 40]
-print(head, tail)                    # -> 10 [20, 30, 40]   (star-unpacking)
-print({"a": 1} | {"b": 2})           # -> {'a': 1, 'b': 2}  (dict union, 3.9+)
-print({1, 2, 3} & {2, 3, 4})         # -> {2, 3}            (set intersection)
-print(list(zip(*[(1, 2), (3, 4)])))  # -> [(1, 3), (2, 4)]  (transpose)
+class LikertError(ValueError):       # your own exception type
+    pass
+print(issubclass(LikertError, ValueError))   # -> True  (so `except ValueError` still catches it)
+
+try:
+    assert 1 == 2, "values differ"   # assert: cheap internal sanity check
+except AssertionError as e:
+    print(e)                         # -> values differ
+```
+
+## Part B — Files, Libraries & Research Data
+
+Files provided: `students.csv`, `survey.csv`.
+
+### Task 1 — Read & summarize students
+Read `students.csv` with `csv.DictReader`. Remember the values are **strings** — convert
+`score` to `int`. Print the class mean and median with the `statistics` module.
+
+### Task 2 — Mean by major
+Build `{major: mean_score}`. (Hint: `dict.setdefault(key, []).append(...)`.)
+
+### Task 3 — Clean & summarize the survey
+`survey.csv` has `"N/A"` and blanks in numeric columns. For each `q*` item, compute the
+mean of the **valid** values only, and how many were valid. Write `survey_summary.csv`
+with columns `item,mean,n_valid`.
+
+### Task 4 — pandas teaser (optional)
+If `pandas` is installed: `pd.read_csv("students.csv")["score"].describe()`. Compare the
+mean to your hand-computed one.
+
+### Trap check
+What happens if you accidentally open `students.csv` with mode `"w"` before reading it?
+
+### Bonus — Pythonic idiom drill
+Cover the `# ->` answers, predict each line, then run.
+
+```python
+import json
+s = json.dumps({"n": 3, "ok": True})
+print(s)                             # -> {"n": 3, "ok": true}   (Python True -> JSON true)
+print(json.loads(s)["ok"])           # -> True                   (and back to a Python bool)
 ```
 
 ---
 
 <details><summary>Show solutions</summary>
 
+### Part A — Exceptions & Defensive Code
+
 ```python
-# 1
-print([s["name"] for s in sorted(roster, key=lambda s: s["score"], reverse=True)])
-# ['Ana', 'Cara', 'Dev', 'Ben']
+def safe_int(value):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return None
 
-# 2
-name_to_score = {s["name"]: s["score"] for s in roster}
+def clean_likert(n):
+    if isinstance(n, bool) or not isinstance(n, int):
+        raise ValueError(f"{n!r} not an int")
+    if not 1 <= n <= 5:
+        raise ValueError(f"{n} outside 1–5")
+    return n
 
-# 3
-groups = {"pass": [], "fail": []}
-for s in roster:
-    groups["pass" if s["score"] >= 60 else "fail"].append(s["name"])
-
-# 4
-vals = ["A","B","A","C","B"]
-distinct = set(vals); print(distinct, len(distinct))   # {'A','B','C'} 3
-
-# 5
-import copy
-b = roster                       # alias
-roster.append({"name": "Eve", "score": 80})
-# b now also has Eve. To stay independent:
-b = copy.deepcopy(roster)        # changes to roster no longer touch b
+raw = ["5","3","N/A","7","","1","two","4"]
+clean, rejected = [], []
+for r in raw:
+    try:
+        clean.append(clean_likert(safe_int(r)))
+    except ValueError as e:
+        rejected.append((r, str(e)))
+print(clean)      # [5, 3, 1, 4]
+print(rejected)   # [('N/A', ...), ('7', ...), ('', ...), ('two', ...)]
 ```
+
+```python
+# test_clean.py
+import pytest
+from clean import clean_likert
+def test_ok():   assert clean_likert(3) == 3
+def test_bad():
+    with pytest.raises(ValueError):
+        clean_likert(9)
+```
+
+Task 4: a bare `except:` also catches `KeyboardInterrupt` (Ctrl+C) and `NameError`
+from your own typos — so a misspelled variable would be silently swallowed instead of
+showing you the bug. Always catch the specific exception you expect.
+
+### Part B — Files, Libraries & Research Data
+
+See `demo.py` in this folder — it implements Tasks 1–3 exactly. Key lines:
+
+```python
+scores = [int(s["score"]) for s in students]     # convert strings!
+statistics.mean(scores)                           # 75.5
+
+by_major = {}
+for s in students:
+    by_major.setdefault(s["major"], []).append(int(s["score"]))
+
+def to_int(x):
+    try: return int(x)
+    except (ValueError, TypeError): return None   # handles N/A and ""
+```
+
+Trap: opening with `"w"` **truncates the file to empty immediately** — your data is gone
+before you ever read it. Use `"r"` (the default) to read.
 
 
 </details>
 
 </script>
 <script type="text/markdown" id="quiz-md">
-### Quiz — Data Structures
-1. Which are mutable: list, tuple, dict, set?
-2. What does `xs.sort()` return? How do you get a *new* sorted list?
-3. `a = [1,2]; b = a; a.append(3)` — what is `b`? Why?
-4. (Practical) One-line dict comprehension mapping each name in `names` to `0`.
+### Quiz — Exceptions, Files & Research Data
+*Part A — Exceptions*
+1. Which exception does `int("N/A")` raise? Wrap `int(value)` so it returns `None` on failure.
+2. Why is a bare `except:` dangerous?
+3. When should you use `raise` vs `assert`?
+
+*Part B — Files & Data*
+4. What does opening a file in `"w"` mode do to existing contents? Why prefer `with open(...)`?
+5. After `csv.DictReader`, what type is each row?
+6. CSV values read from a file are what type — and what must you do with numbers?
 
 <details><summary>Show answers</summary>
 
-**Answers:** 1. list, dict, set are mutable; tuple is not. 2. `None` (sorts in place);
-`sorted(xs)`. 3. `[1, 2, 3]` — `b` is an alias for the same list. 4. `{n: 0 for n in names}`.
+**Answers:** 1. `ValueError`; `try: return int(value) except (ValueError, TypeError): return None`.
+2. It catches everything (even Ctrl+C and your own typos) and can hide bugs. 3. `raise` to validate
+real/untrusted input; `assert` for developer sanity checks (can be disabled). 4. Truncates it to
+empty immediately; `with` auto-closes even if the code crashes. 5. A `dict` keyed by the header
+row. 6. Strings; convert with `int()`/`float()`.
 
 </details>
 </script>
-<script type="application/json" id="playgrounds-data">[{"title": "structures_and_aliasing.py", "code": "roster = [{\"name\": \"Ana\", \"score\": 91},\n          {\"name\": \"Ben\", \"score\": 58},\n          {\"name\": \"Cara\", \"score\": 73}]\n\nranked = sorted(roster, key=lambda s: s[\"score\"], reverse=True)\nprint(\"ranked:\", [s[\"name\"] for s in ranked])\nprint(\"map:   \", {s[\"name\"]: s[\"score\"] for s in roster})   # dict comprehension\n\n# Aliasing: assignment does NOT copy.\na = [1, 2, 3]; b = a; a.append(4)\nprint(\"alias b:\", b)        # [1, 2, 3, 4]\nc = a.copy(); a.append(5)\nprint(\"copy  c:\", c)        # unaffected\n\nhead, *tail = [10, 20, 30]\nprint(\"unpack:\", head, tail)            # 10 [20, 30]  (star-unpacking)\nprint(\"merge: \", {\"a\": 1} | {\"b\": 2})   # {'a': 1, 'b': 2}  (dict union, 3.9+)\nprint(\"set & :\", {1, 2, 3} & {2, 3, 4}) # {2, 3}  (set intersection)\n"}]</script>
+<script type="application/json" id="playgrounds-data">[{"title": "clean_dirty_survey.py", "code": "def safe_int(v):\n    try:\n        return int(v)\n    except (ValueError, TypeError):\n        return None\n\ndef clean_likert(n):\n    if isinstance(n, bool) or not isinstance(n, int):\n        raise ValueError(f\"{n!r} not an int\")\n    if not 1 <= n <= 5:\n        raise ValueError(f\"{n} outside 1-5\")\n    return n\n\nraw = [\"5\", \"3\", \"N/A\", \"7\", \"\", \"1\", \"two\", \"4\"]\nclean, rejected = [], []\nfor r in raw:\n    try:\n        clean.append(clean_likert(safe_int(r)))\n    except ValueError as e:\n        rejected.append((r, str(e)))\nprint(\"clean:   \", clean)\nprint(\"rejected:\", rejected)\n\n# Your own exception type + assert (a cheap internal sanity check):\nclass LikertError(ValueError):\n    pass\nprint(\"subclass of ValueError?\", issubclass(LikertError, ValueError))   # True\ntry:\n    assert 1 == 2, \"values differ\"\nexcept AssertionError as e:\n    print(\"assert caught:\", e)\n"}, {"title": "read_csv_in_memory.py", "code": "import csv, statistics, io\n\n# A real CSV would be a file; here we read it from a string so it runs in-browser.\nDATA = \"\"\"name,major,score\nAna,Education,91\nBen,Psychology,58\nCara,Education,73\nDev,Sociology,64\nEve,Psychology,88\"\"\"\n\nrows = list(csv.DictReader(io.StringIO(DATA)))\nscores = [int(r[\"score\"]) for r in rows]      # CSV values are STRINGS \u2014 convert!\nprint(\"class mean:\", statistics.mean(scores))\n\nby_major = {}\nfor r in rows:\n    by_major.setdefault(r[\"major\"], []).append(int(r[\"score\"]))\nprint(\"by major:  \", {m: round(statistics.mean(v), 1) for m, v in by_major.items()})\n\nimport json                                   # serialize a Python object to text and back\nblob = json.dumps({\"n\": len(rows), \"mean\": statistics.mean(scores)})\nprint(\"json:      \", blob, \"->\", json.loads(blob)[\"n\"])\n"}]</script>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 <script src="assets/app.js"></script>

@@ -1,66 +1,143 @@
-# Session 2 — Practice (60 min)
+# Session 2 — Practice: Control Flow & Data Structures
 
-## Part A — Explain the gauntlet (25 min)
-For each line, write *why* (one sentence). Predict, then run to check.
+This 2-hour session has two halves. Do **Part A** after the first topic, **Part B** after the second. Predict every output before you run it.
 
+## Part A — Control Flow: Conditionals & Loops
+
+### Task 1 — Grade-band classifier
+Write `letter_grade(score)` returning A/B/C/D/F (90/80/70/60 cutoffs), `"Invalid"` outside 0–100.
+**Test the boundaries:** 90, 89.999, 0, 100, -5, 101.
+
+### Task 2 — Boolean logic
+1. What is `5 and 0`? `"" or "N/A"`? Why aren't they `True`/`False`?
+2. Rewrite `if attended == True:` the Pythonic way.
+
+### Task 3 — Average + pass/fail (loops)
+Given `names = ["Ana","Ben","Cara","Dev"]` and `scores = [91, 58, 73, 64]`:
+1. Compute the mean with a loop and a running total.
+2. Use `zip` to print `"<name>: PASS"` (≥60) or `"<name>: FAIL"`.
+3. Count the passes with `sum(s >= 60 for s in scores)`.
+
+### Task 4 — Validation loop
+Write a real `while True:` prompt that keeps asking until the user types an integer 0–100.
+
+### Task 5 — Trap check
+Why does this skip elements, and what's the fix?
 ```python
-True + True            # 2     — bools are ints; True is 1
-3 == 3.0               # True  — numbers compare by value
-0.1 + 0.2 == 0.3       # False — binary float rounding
-5 == "5"               # False — different types, no error
-5 > "5"                # 💥    — can't ORDER int vs str
-[1,2] == (1,2)         # False — list vs tuple are different types
-bool("0")              # True  — non-empty string is truthy
-x=[1]; y=x; x.append(2); y   # [1,2] — y is an alias of x
+xs = [1, 2, 3, 4]
+for x in xs:
+    if x % 2 == 0:
+        xs.remove(x)
 ```
 
-## Part B — `clean_score()` (35 min)
-Write a function that safely turns a value into a float on a 0–100 scale:
-
-```python
-def clean_score(value):
-    """
-    Accept 87, 87.0, or "87" and return 87.0 (a float).
-    - Reject anything outside 0..100 with a clear message (return None).
-    - Compare floats safely (no exact ==).
-    """
-```
-Test it on: `87`, `87.0`, `"87"`, `"eighty"`, `120`, `True`.
-*What does `True` do, and why? (Hint: bool is an int...)*
-
-## Bonus — Pythonic idiom drill
+### Bonus — Pythonic idiom drill
 Cover the `# ->` answers, predict each line, then run.
 
 ```python
-x = int("257"); y = int("257")
-print(x == y, x is y)                # -> True False   (equal value, different objects)
-print(float("nan") == float("nan"))  # -> False        (NaN equals nothing, not even itself)
+nums = [80, 92, 45]
+print(all(n >= 60 for n in nums))    # -> False   (45 fails)
+print(any(n >= 90 for n in nums))    # -> True    (92 passes)
+print(92 in nums, 60 in nums)        # -> True False
+```
+
+## Part B — Data Structures: list, tuple, dict, set
+
+Start from:
+```python
+roster = [
+    {"name": "Ana", "score": 91}, {"name": "Ben", "score": 58},
+    {"name": "Cara", "score": 73}, {"name": "Dev", "score": 64},
+]
+```
+
+### Task 1 — Rank
+Print names sorted by score, highest first.
+
+### Task 2 — Map (dict comprehension)
+Build `{name: score}` in one line.
+
+### Task 3 — Group
+Build `{"pass": [...names...], "fail": [...names...]}` using a loop.
+
+### Task 4 — Dedup
+From `["A","B","A","C","B"]`, get the distinct values and how many there are.
+
+### Task 5 — Aliasing
+Show that `b = roster` then `roster.append({...})` also changes `b`. Then make `b` an
+independent copy so it doesn't. (Hint: nested dicts → `copy.deepcopy`.)
+
+### Bonus — Pythonic idiom drill
+Cover the `# ->` answers, predict each line, then run.
+
+```python
+head, *tail = [10, 20, 30, 40]
+print(head, tail)                    # -> 10 [20, 30, 40]   (star-unpacking)
+print({"a": 1} | {"b": 2})           # -> {'a': 1, 'b': 2}  (dict union, 3.9+)
+print({1, 2, 3} & {2, 3, 4})         # -> {2, 3}            (set intersection)
+print(list(zip(*[(1, 2), (3, 4)])))  # -> [(1, 3), (2, 4)]  (transpose)
 ```
 
 ---
-## Solution
+
+## Solutions
+
+### Part A — Control Flow: Conditionals & Loops
 
 ```python
-import math
+# 1
+def letter_grade(score):
+    if not 0 <= score <= 100: return "Invalid"
+    for cutoff, g in [(90,"A"),(80,"B"),(70,"C"),(60,"D")]:
+        if score >= cutoff: return g
+    return "F"
+# 90->A, 89.999->B, 0->F, 100->A, -5->Invalid, 101->Invalid
 
-def clean_score(value):
-    # Reject bools explicitly — they'd sneak through as ints (True == 1).
-    if isinstance(value, bool):
-        print(f"Rejected {value!r}: looks like a flag, not a score.")
-        return None
-    try:
-        score = float(value)              # handles int, float, and numeric strings
-    except (ValueError, TypeError):
-        print(f"Rejected {value!r}: not a number.")
-        return None
-    if not 0 <= score <= 100:
-        print(f"Rejected {value!r}: out of range 0–100.")
-        return None
-    return score
+# 2
+# 5 and 0 -> 0 ; "" or "N/A" -> "N/A"  (and/or return an operand, not a bool)
+result = "pass" if attended else "absent"     # and just `if attended:`
 
-for v in [87, 87.0, "87", "eighty", 120, True]:
-    print(v, "->", clean_score(v))
-# 87->87.0, 87.0->87.0, "87"->87.0, "eighty"->None, 120->None, True->None
+# 3
+total = 0
+for s in scores: total += s
+print(total / len(scores))                    # 71.5
+for name, score in zip(names, scores):
+    print(f"{name}: {'PASS' if score >= 60 else 'FAIL'}")
+print("passes:", sum(s >= 60 for s in scores))   # 3
+
+# 4
+while True:
+    raw = input("Score 0–100: ")
+    if raw.isdigit() and 0 <= int(raw) <= 100:
+        print("Got", int(raw)); break
+    print("Try again.")
+
+# 5  Removing while iterating shifts indices, so elements get skipped.
+xs = [x for x in xs if x % 2 != 0]            # build a new list instead -> [1, 3]
 ```
-Key lesson: `float(True)` is `1.0`, so without the explicit bool check a flag would
-pass as a valid score. This is the `bool ⊂ int` trap in a real function.
+
+### Part B — Data Structures: list, tuple, dict, set
+
+```python
+# 1
+print([s["name"] for s in sorted(roster, key=lambda s: s["score"], reverse=True)])
+# ['Ana', 'Cara', 'Dev', 'Ben']
+
+# 2
+name_to_score = {s["name"]: s["score"] for s in roster}
+
+# 3
+groups = {"pass": [], "fail": []}
+for s in roster:
+    groups["pass" if s["score"] >= 60 else "fail"].append(s["name"])
+
+# 4
+vals = ["A","B","A","C","B"]
+distinct = set(vals); print(distinct, len(distinct))   # {'A','B','C'} 3
+
+# 5
+import copy
+b = roster                       # alias
+roster.append({"name": "Eve", "score": 80})
+# b now also has Eve. To stay independent:
+b = copy.deepcopy(roster)        # changes to roster no longer touch b
+```

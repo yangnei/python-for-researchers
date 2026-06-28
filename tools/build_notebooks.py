@@ -6,7 +6,7 @@ examples (examples/session-NN/demo.py + practice.md).
 
 Writes docs/notebooks/session-NN.ipynb. The notebooks are self-contained so they run
 unchanged in JupyterLite (Pyodide), Google Colab, local Jupyter, or VS Code: the two
-sessions that read local files (S8 CSVs, S10 grades.py module) get a setup cell that
+sessions that read local files (S4 CSVs, S5 grades.py module) get a setup cell that
 writes those files into the working directory first.
 """
 import importlib.util
@@ -24,11 +24,12 @@ _bs = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_bs)
 SESSIONS = _bs.SESSIONS
 
-# Each session has one demo script; most are demo.py, S2 is traps_demo.py.
-DEMO_NAME = {2: "traps_demo.py"}
+# Every session's demo is demo.py.
+DEMO_NAME: dict[int, str] = {}
 
-# A line that begins a new logical block -> a new code cell.
-SECTION_RE = re.compile(r'^(# -{2,}|# \d+[\).]|print\("(\\n)?=== )')
+# A line that begins a new logical block -> a new code cell. The PART A/PART B banners
+# (rows of '#====') also start a new cell so the two halves split cleanly.
+SECTION_RE = re.compile(r'^(# -{2,}|# \d+[\).]|# ={3,}|print\("(\\n)?=== )')
 
 
 def strip_module_docstring(src: str) -> str:
@@ -53,20 +54,20 @@ def split_code_cells(src: str) -> list[str]:
 
 def setup_cell(n: int) -> str | None:
     """Return notebook-only setup code for sessions that depend on local files."""
-    if n == 8:
-        students = (EXAMPLES / "session-08" / "students.csv").read_text()
-        survey = (EXAMPLES / "session-08" / "survey.csv").read_text()
+    if n == 4:   # the Files half reads CSVs
+        students = (EXAMPLES / "session-04" / "students.csv").read_text()
+        survey = (EXAMPLES / "session-04" / "survey.csv").read_text()
         return (
-            "# Setup (notebook only): write the data files this session reads.\n"
+            "# Setup (notebook only): write the data files Part B of this session reads.\n"
             "from pathlib import Path\n"
             f"Path('students.csv').write_text({students!r})\n"
             f"Path('survey.csv').write_text({survey!r})\n"
             "print('wrote students.csv, survey.csv')"
         )
-    if n == 10:
-        grades = (EXAMPLES / "session-10" / "grades.py").read_text()
+    if n == 5:   # the Modules/OOP half imports grades.py
+        grades = (EXAMPLES / "session-05" / "grades.py").read_text()
         return (
-            "# Setup (notebook only): write the module this session imports, then make it importable.\n"
+            "# Setup (notebook only): write the module Part B imports, then make it importable.\n"
             "import sys\n"
             "from pathlib import Path\n"
             f"Path('grades.py').write_text({grades!r})\n"
@@ -78,7 +79,7 @@ def setup_cell(n: int) -> str | None:
 
 def patch_demo(n: int, src: str) -> str:
     """Make file-reading demos work without __file__ (notebooks have no __file__)."""
-    if n == 8:
+    if n == 4:
         src = src.replace(
             "HERE = Path(__file__).parent     # so it works no matter where you run it",
             'HERE = Path(".")                 # notebook: files are written by the setup cell',

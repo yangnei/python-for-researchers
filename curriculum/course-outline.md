@@ -1,7 +1,8 @@
 # Master Course Outline — Learn Python
 
 > Single source of truth. The student and teacher syllabi both derive from this.
-> **10 core two-hour sessions** + 1 optional capstone session (~20 hours core, ~22 with the capstone).
+> **5 core two-hour sessions** + 1 optional capstone session (~12 hours core, ~14 with the capstone).
+> Each session covers **two paired topics** (Part A + Part B) around a mid-session break.
 
 ## How the topics are sequenced
 
@@ -9,137 +10,121 @@ A typical intro-Python course teaches roughly: functions/variables → condition
 exceptions → libraries → unit tests → file I/O → regular expressions → OOP → assorted
 "power-tools."
 
-We **re-sequence** for a fast adult learner: dynamic-typing fundamentals come forward into
-Session 2; conditionals and loops are taught together as one "control flow" session (they're the
-two halves of the same idea, and a fast learner clears them quickly); and the power-tools
-(comprehensions, generators, `*args`, type hints) are folded into the sessions where they
-naturally belong instead of left to the end. **Recursion** gets its own session right after
-Functions (S6): it's a function that calls itself, so it lands best while function mechanics are
-fresh — and Data Structures (S4) is already in hand for the nested-data payoff.
+We **re-sequence and pair** for a fast adult learner. A strong self-learner clears one of those
+topics in well under an hour, so stretching one across a two-hour session wastes the back half.
+Instead each two-hour session bundles **two related topics** that share a through-line:
+
+1. **Types → the type traps.** You can't reason about the traps until you know the types, and the
+   traps are the whole reason this course exists — so they lead, together, on day one.
+2. **Control flow → data structures.** Loops are most useful over the containers worth looping; a
+   list of dicts is just a dataset.
+3. **Functions → recursion.** Recursion is a function that calls itself, so it lands while function
+   mechanics are fresh — and nested data (from S2) is the payoff.
+4. **Exceptions → files & research data.** Surviving one dirty value scales straight into cleaning a
+   whole CSV of them.
+5. **Regex → modules & OOP.** The two "finishing" skills: clean any text, then organize code into
+   modules and a small class.
+
+The power-tools (comprehensions, generators, `*args`, type hints, the walrus) are folded into the
+sessions where they naturally belong, not saved for the end.
 
 ## Design rules (from the e-learning pipeline)
-- Every session = two hours, structured **Concept → Live Example → Practice → (break) → more Practice → Traps → Summary**.
-- **Practice is the biggest block (~60 min, split around a mid-session break) and is packed** — this learner moves fast, so each
-  session's practice carries enough tasks to fill the time without padding.
-- Every session has 2–4 learning objectives; every objective is testable in that session's quiz.
+- **Every session = two hours = two paired topics**, run **Part A → break → Part B → combined recap**.
+- Each half is **Concept → Live Example → Practice**; practice is woven into both halves plus a short
+  combined block (**~1 hour hands-on total**), packed because this learner moves fast.
+- Every session has 4–6 learning objectives (≈2–3 per half); every objective is testable in that
+  session's quiz.
 - Every abstract idea ships with a runnable, education-flavored example.
 - Difficulty rises monotonically; nothing is used before it's introduced (except clearly-flagged teasers).
 
 ---
 
-## Session 1 — Running Python, Variables & Types
-**Objectives**
-1. Run Python both interactively (REPL) and as a `.py` script; read a traceback without panic.
-2. Use variables and the core built-in types: `int`, `float`, `str`, `bool`, `None`.
-3. Do I/O with `input()`/`print()`, format with f-strings, and convert types with `int()`/`float()`/`str()`.
+## Session 1 — Running Python, Types & the Type Traps
+*Part A — Running Python, Variables & Types · Part B — the Dynamic-Typing Traps (the core of the course)*
 
-**Key idea the beginner misses:** `input()` *always* returns a `str`; numbers from users must be converted.
+**Objectives**
+1. Run Python interactively (REPL) and as a `.py` script; read a traceback without panic.
+2. Use the core types (`int`, `float`, `str`, `bool`, `None`); do I/O with `input()`/`print()`,
+   f-strings, and `int()`/`float()`/`str()` (remember `input()` is always a `str`).
+3. Distinguish **value equality (`==`)** from **identity (`is`)**; predict `bool ⊂ int`
+   (`True == 1`), `int`/`float`, and **float precision** (`0.1 + 0.2`).
+4. Check types with `isinstance()` vs `type()`, handle `5 == "5"` vs `5 > "5"`, and reason about truthiness.
+
+**Why it leads:** the whole course is built around the type traps (`==` vs `is`, `True == 1`,
+`0.1 + 0.2`, `5 == "5"`). Front-loading them — right after the types they concern — means every
+later session can assume the fluency.
 
 ---
 
-## Session 2 — The Dynamic-Typing Traps (THE CORE SESSION)
-**Objectives**
-1. Distinguish **value equality (`==`)** from **identity (`is`)** and know when each is correct.
-2. Predict results when mixing numeric types: `bool` ⊂ `int`, `int`/`float`, and **float precision**.
-3. Check types correctly with `isinstance()` vs `type()`, and reason about truthiness.
+## Session 2 — Control Flow & Data Structures
+*Part A — Conditionals & Loops · Part B — list / tuple / dict / set*
 
-**This is the session the whole course is built around** — it front-loads every trap in the
-learner's brief (`==` vs `is`, `True == 1`, `3 == 3.0`, `0.1 + 0.2`, `5 == "5"` vs `5 > "5"`,
-sequence comparison, `isinstance`). Everything later assumes this fluency.
+**Objectives**
+1. Write `if`/`elif`/`else` with comparison & logical operators and **chained comparisons**; use
+   `and`/`or`/`not` correctly (short-circuit, operand-return); avoid `if x == True`.
+2. Write `for`/`while` loops; control them with `break`/`continue`; mind `range` off-by-one;
+   iterate Pythonically with `enumerate`/`zip` and the `while True:` validation loop.
+3. Choose between `list`/`tuple`/`dict`/`set`; index, slice, and nest them; build list/dict
+   **comprehensions**; sort with `sorted(key=…)`.
+4. Reason about **mutability & aliasing** (copy vs reference, `[[0]*3]*3` shared rows).
+
+**Trap focus:** `if x == True`, `range(1,5)` excludes 5, mutating a list while iterating it,
+`range(len(...))` instead of `enumerate`/`zip`, and **aliasing** (`b = a` shares the list).
 
 ---
 
-## Session 3 — Control Flow: Conditionals & Loops
-**Objectives**
-1. Write `if`/`elif`/`else` with comparison & logical operators and **chained comparisons**;
-   use `and`/`or`/`not` correctly (short-circuit, operand-return) and avoid `if x == True`.
-2. Write `for` and `while` loops; control them with `break`/`continue`; mind `range` off-by-one.
-3. Iterate the Pythonic way with `enumerate` and `zip`, and build the `while True:` validation loop.
+## Session 3 — Functions, Scope & Recursion
+*Part A — Functions, Scope & Reusability · Part B — Recursion*
 
-**Trap focus:** `if x == True`/`is None`, `=` vs `==`, `range(1,5)` excludes 5, mutating a list
-while iterating it, reaching for `range(len(...))` instead of `enumerate`/`zip`.
-
----
-
-## Session 4 — Data Structures: list, tuple, dict, set
-**Objectives**
-1. Choose between `list`, `tuple`, `dict`, and `set`; index, slice, and nest them.
-2. Sort with `sorted(..., key=...)` and lambdas; build **list/dict comprehensions**.
-3. Reason about **mutability & aliasing** (copy vs reference, shallow vs deep copy).
-
-**Trap focus:** aliasing (`b = a`), `list * n` shared rows, mutable default arguments (preview),
-element-by-element sequence comparison, set deduplication of survey data.
-
----
-
-## Session 5 — Functions, Scope & Reusability
 **Objectives**
 1. Define functions with positional, keyword, default, `*args`, and `**kwargs` parameters.
-2. Explain scope (LEGB), `return` vs `print`, and avoid the `UnboundLocalError`/`global` trap.
-3. Document with docstrings and annotate with **type hints** (and know hints aren't enforced).
+2. Explain scope (LEGB) and `return` vs `print`; document with docstrings and **type hints**
+   (and know hints aren't enforced); dodge the `UnboundLocalError`/`global` trap.
+3. Write a recursive function with a correct **base case** and **recursive case**; trace the
+   **call stack**; convert between recursion and iteration; know recursion's cost (`RecursionError`,
+   no tail-call optimization, limit ≈ 1000).
+4. Apply recursion to **naturally nested data** (nested lists/dicts/JSON) where one loop is awkward.
 
-**Trap focus:** the **mutable default argument** bug, late-binding closures, implicit `None` return.
+**Trap focus:** the **mutable default argument** bug; forgetting to `return` (function or recursive
+call returns `None`); an unreachable base case → stack overflow.
 
 ---
 
-## Session 6 — Recursion & Recursive Thinking
+## Session 4 — Exceptions, Files & Research Data
+*Part A — Exceptions & Defensive Code · Part B — Files, Libraries & Research Data*
+
 **Objectives**
-1. Write a recursive function with a correct **base case** and a **recursive case**; trace the
-   **call stack** and convert between recursion and iteration.
-2. Reason about recursion's cost: a missing base case → `RecursionError`, and Python has no
-   tail-call optimization (each pending call keeps a stack frame, default limit ~1000).
-3. Apply recursion to **naturally nested data** (nested lists/dicts, JSON, trees) where a single loop is awkward.
+1. Handle errors with `try`/`except`/`else`/`finally`; `raise` deliberately; validate messy
+   human/research input the EAFP way; use `assert` and write a first `pytest` test.
+2. Read/write text with `open`/`with` and understand file modes (why `"w"` is dangerous).
+3. Load and write **CSV** survey/gradebook data with `csv.DictReader`/`DictWriter`; touch `json`.
+4. `import` the researcher's stdlib (`statistics`, `datetime`, `pathlib`), `pip install` a package,
+   and meet `pandas` in a guided teaser.
 
-**Trap focus:** missing/unreachable base case (infinite recursion → stack overflow), forgetting to
-`return` the recursive call (silent `None`), assuming recursion is free, reaching for recursion where
-a plain loop reads more clearly.
+**Trap focus:** bare `except:`, swallowing errors, `"w"` silently overwrites, forgotten
+`newline=""`, reading a file twice.
 
 ---
 
-## Session 7 — Exceptions & Defensive Code
+## Session 5 — Regular Expressions, Modules & OOP
+*Part A — Regular Expressions & Text Cleaning · Part B — Modules, OOP & the Pythonic Toolkit*
+
 **Objectives**
-1. Handle errors with `try`/`except`/`else`/`finally`; raise `ValueError` etc. deliberately.
-2. Validate real, messy human/research input robustly (EAFP "ask forgiveness" style).
-3. Use `assert` and write a first `pytest` test for a function.
+1. Write patterns with raw strings and the core tokens; use `re.search`/`fullmatch`/`findall`/`sub`
+   to validate, extract (capture groups), and clean real research text.
+2. Split code into modules and `import` them; understand the `if __name__ == "__main__":` guard.
+3. Model a domain entity with a small **class** (`__init__`, `self`, `__str__`, a validating
+   `@property`, brief inheritance with `super()`).
+4. Apply the **Pythonic toolkit**: comprehensions, `map`/`filter`, `enumerate`/`zip`,
+   generators/`yield`, the walrus `:=`.
 
-**Trap focus:** bare `except:`, catching too broadly, swallowing errors silently.
-
----
-
-## Session 8 — Files, Libraries & Research Data
-**Objectives**
-1. Read/write text with `open`/`with`; understand file modes and why `with` matters.
-2. Load and write **CSV** survey/gradebook data with `csv.DictReader`/`DictWriter`; touch `json`.
-3. `import` standard-library tools a researcher reaches for (`statistics`, `random`, `datetime`,
-   `pathlib`) and install a third-party package with `pip` (guided `pandas` teaser).
-
-**Trap focus:** `"w"` silently overwrites, forgotten `newline=""`/`\n`, file encoding.
+**Trap focus:** forgetting `r"..."`, `.` matches any char, `re.search` returns `None`, `self`
+confusion, a generator exhausts after one pass, over-using a class where a function/dict fits.
 
 ---
 
-## Session 9 — Regular Expressions & Text Cleaning
-**Objectives**
-1. Write patterns with raw strings and the core tokens (`. \d \w \s + * ? {m,n} ^ $ [] () |`).
-2. Use `re.search`/`fullmatch`/`findall`/`sub` to validate, extract (capture groups), and clean text.
-3. Apply regex to real research text: validate IDs/emails, extract codes, normalize and mine free responses.
-
-**Trap focus:** `.` matches *any* char (use `\.`), forgetting raw strings, `re.search` returns `None`,
-reaching for regex where a string method is clearer.
-
----
-
-## Session 10 — Modules, OOP & the Pythonic Toolkit
-**Objectives**
-1. Split code into modules and `import` them; understand the `if __name__ == "__main__":` guard.
-2. Model a domain entity with a small **class** (`__init__`, `self`, `__str__`, a validating `@property`, brief inheritance with `super()`).
-3. Apply the "Pythonic" toolkit: comprehensions, `map`/`filter`, `enumerate`/`zip`, generators/`yield`, the walrus `:=`.
-
-**Trap focus:** `self` confusion, a generator exhausts after one pass, over-using a class where a function/dict fits.
-
----
-
-## Session 11 (Optional) — Capstone Project *(integrative)*
-**Objective:** Independently build one small, end-to-end program on a real-ish education dataset.
+## Session 6 (Optional) — Capstone Project *(integrative)*
+**Objective:** independently build one small, end-to-end program on a real-ish education dataset.
 Default brief: **"Gradebook & Survey Analyzer"** — read a CSV of students + Likert responses,
 clean and validate it, compute summary statistics, flag at-risk students, and write a report CSV.
 Alternative briefs are listed in `assessments/capstone-project.md`.
@@ -147,22 +132,23 @@ Alternative briefs are listed in `assessments/capstone-project.md`.
 ---
 
 ## Coverage check (every core topic lands somewhere)
-| Topic | Where it lives here |
+| Topic | Where it lives now |
 |---|---|
-| Functions & variables | S1, S5 |
-| Conditionals | S3 (+ traps in S2) |
-| Loops | S3 (+ iterating data in S4) |
-| Recursion | S6 (nested data ties to S4) |
-| Exceptions | S7 |
-| Libraries | S8 |
-| Unit tests | S7 (+ modules in S10) |
-| File I/O | S8 (+ data structures S4) |
-| Regular expressions | S9 |
-| Modules & OOP | S10 |
-| Power-tools (sets, comprehensions, `*args`, type hints, generators, `map`/`filter`) | S4, S5, S10 |
+| Running Python, variables & types | S1 Part A |
+| The dynamic-typing traps (`==`/`is`, floats, `bool⊂int`, `isinstance`) | S1 Part B |
+| Conditionals | S2 Part A |
+| Loops | S2 Part A (iterating data in S2 Part B) |
+| Data structures (list/tuple/dict/set) | S2 Part B |
+| Functions, scope & reuse | S3 Part A |
+| Recursion | S3 Part B (nested data ties to S2 Part B) |
+| Exceptions & unit tests | S4 Part A |
+| Files & libraries (CSV, `statistics`, `pandas` teaser) | S4 Part B |
+| Regular expressions | S5 Part A |
+| Modules & OOP | S5 Part B |
+| Power-tools (comprehensions, `*args`, type hints, generators, `map`/`filter`, walrus) | S2, S3, S5 |
 
 ## Scaling to the time budget
-- **~16 hours:** fold the Pythonic-toolkit half of S10 into S4/S5 and trim the `pandas` teaser
-  (recursion, S6, stays — it's a core skill, not an add-on).
-- **~20 hours:** run S1–S10 as written, two hours each (recommended).
-- **~22 hours:** add the S11 capstone.
+- **~10 hours:** drop the Pythonic-toolkit tour in S5 Part B and the `pandas`/`json` teaser in S4;
+  keep both halves' core of every session.
+- **~12 hours:** run S1–S5 as written, two hours each (recommended).
+- **~14 hours:** add the S6 capstone.

@@ -1,72 +1,159 @@
-# Session 3 — Practice (60 min): Conditionals & Loops
+# Session 3 — Practice: Functions & Recursion
 
-## Task 1 — Grade-band classifier
-Write `letter_grade(score)` returning A/B/C/D/F (90/80/70/60 cutoffs), `"Invalid"` outside 0–100.
-**Test the boundaries:** 90, 89.999, 0, 100, -5, 101.
+This 2-hour session has two halves. Do **Part A** after the first topic, **Part B** after the second. Predict every output before you run it.
 
-## Task 2 — Boolean logic
-1. What is `5 and 0`? `"" or "N/A"`? Why aren't they `True`/`False`?
-2. Rewrite `if attended == True:` the Pythonic way.
+## Part A — Functions, Scope & Reusability
 
-## Task 3 — Average + pass/fail (loops)
-Given `names = ["Ana","Ben","Cara","Dev"]` and `scores = [91, 58, 73, 64]`:
-1. Compute the mean with a loop and a running total.
-2. Use `zip` to print `"<name>: PASS"` (≥60) or `"<name>: FAIL"`.
-3. Count the passes with `sum(s >= 60 for s in scores)`.
+### Task 1 — Grade-functions module
+Write three functions with docstrings and type hints:
+- `class_average(scores: list[float]) -> float`
+- `letter_grade(score: float) -> str`  (reuse Session 3)
+- `pass_rate(scores: list[float], passing: float = 60) -> float`  (fraction passing, 0–1)
 
-## Task 4 — Validation loop
-Write a real `while True:` prompt that keeps asking until the user types an integer 0–100.
+Use bool-summing for `pass_rate` (recall `sum(s >= passing for s in scores)`).
 
-## Task 5 — Trap check
-Why does this skip elements, and what's the fix?
-```python
-xs = [1, 2, 3, 4]
-for x in xs:
-    if x % 2 == 0:
-        xs.remove(x)
-```
+### Task 2 — Reproduce & fix the mutable-default bug
+Write `add_note(text, notes=[])` that appends and returns. Call it three times and watch
+the list grow. Then fix it with the `None` pattern and prove each call starts fresh.
 
-## Bonus — Pythonic idiom drill
+### Task 3 — *args summary
+Write `summary(*scores)` that returns a dict `{"n":..., "mean":..., "max":..., "min":...}`.
+Call it both as `summary(91, 58, 73)` and as `summary(*my_list)`.
+
+### Bonus — Pythonic idiom drill
 Cover the `# ->` answers, predict each line, then run.
 
 ```python
-nums = [80, 92, 45]
-print(all(n >= 60 for n in nums))    # -> False   (45 fails)
-print(any(n >= 90 for n in nums))    # -> True    (92 passes)
-print(92 in nums, 60 in nums)        # -> True False
+def f(a, *, b):          # everything after * is keyword-only
+    return a, b
+print(f(1, b=2))                     # -> (1, 2)
+print(f(**{"a": 1, "b": 9}))         # -> (1, 9)   (** unpacks a dict into arguments)
+```
+
+## Part B — Recursion & Recursive Thinking
+
+### Task 1 — Recursive sum
+Write `rsum(n)` that adds `1 + 2 + ... + n` **with recursion** (no loop).
+Name the base case out loud before you write it. Test `rsum(5)` and `rsum(0)`.
+
+### Task 2 — Recursion vs iteration
+Write `reverse(s)` that reverses a string recursively. Then write the loop version.
+Which reads more clearly to you? Test `reverse("data")`.
+
+### Task 3 — Flatten nested data
+Write `flatten(xs)` that turns a list-of-lists (nested to any depth) into one flat list:
+`flatten([1, [2, [3, 4]], 5])` → `[1, 2, 3, 4, 5]`. This is the move for nested JSON/exports.
+
+### Task 4 — How deep does it go?
+Write `depth(xs)` returning how deeply a list is nested:
+`depth([1, [2, [3, [4]]]])` → `4`, `depth([1, 2, 3])` → `1`, `depth(5)` → `0`.
+
+### Task 5 — Trap check
+1. Why does this raise `RecursionError`, and what's the fix?
+   ```python
+   def f(n):
+       return n + f(n - 1)
+   ```
+2. This returns `None` instead of a number — why?
+   ```python
+   def fact(n):
+       if n <= 1:
+           return 1
+       n * fact(n - 1)
+   ```
+3. Name one case where a plain loop is the better choice over recursion.
+
+### Bonus — Pythonic idiom drill
+One decorator makes exponential recursion instant by remembering past calls.
+
+```python
+import functools
+
+@functools.cache                     # memoize: each n is computed once
+def fib(n):
+    return n if n < 2 else fib(n - 1) + fib(n - 2)
+print(fib(35))                       # -> 9227465   (try this WITHOUT @cache... then wait)
 ```
 
 ---
+
 ## Solutions
+
+### Part A — Functions, Scope & Reusability
+
+```python
+def class_average(scores: list[float]) -> float:
+    """Mean of scores."""
+    return sum(scores) / len(scores)
+
+def letter_grade(score: float) -> str:
+    """A/B/C/D/F by 90/80/70/60 cutoffs."""
+    for cutoff, letter in [(90,"A"),(80,"B"),(70,"C"),(60,"D")]:
+        if score >= cutoff:
+            return letter
+    return "F"
+
+def pass_rate(scores: list[float], passing: float = 60) -> float:
+    """Fraction of scores >= passing (0..1)."""
+    return sum(s >= passing for s in scores) / len(scores)
+
+# Task 2
+def add_note(text, notes=None):     # fixed version
+    if notes is None:
+        notes = []
+    notes.append(text)
+    return notes
+
+# Task 3
+def summary(*scores):
+    return {"n": len(scores), "mean": sum(scores)/len(scores),
+            "max": max(scores), "min": min(scores)}
+print(summary(91, 58, 73))
+print(summary(*[91, 58, 73]))
+```
+
+### Part B — Recursion & Recursive Thinking
 
 ```python
 # 1
-def letter_grade(score):
-    if not 0 <= score <= 100: return "Invalid"
-    for cutoff, g in [(90,"A"),(80,"B"),(70,"C"),(60,"D")]:
-        if score >= cutoff: return g
-    return "F"
-# 90->A, 89.999->B, 0->F, 100->A, -5->Invalid, 101->Invalid
+def rsum(n):
+    if n == 0:                      # base case
+        return 0
+    return n + rsum(n - 1)
+print(rsum(5), rsum(0))             # 15 0
 
 # 2
-# 5 and 0 -> 0 ; "" or "N/A" -> "N/A"  (and/or return an operand, not a bool)
-result = "pass" if attended else "absent"     # and just `if attended:`
+def reverse(s):
+    if s == "":                     # base case: empty string
+        return ""
+    return reverse(s[1:]) + s[0]    # all-but-first, reversed, then first
+print(reverse("data"))             # "atad"
+# loop version: "".join(reversed(s))  — usually clearer for flat strings
 
 # 3
-total = 0
-for s in scores: total += s
-print(total / len(scores))                    # 71.5
-for name, score in zip(names, scores):
-    print(f"{name}: {'PASS' if score >= 60 else 'FAIL'}")
-print("passes:", sum(s >= 60 for s in scores))   # 3
+def flatten(xs):
+    out = []
+    for x in xs:
+        if isinstance(x, list):
+            out.extend(flatten(x))  # recurse into the sub-list
+        else:
+            out.append(x)
+    return out
+print(flatten([1, [2, [3, 4]], 5]))   # [1, 2, 3, 4, 5]
 
 # 4
-while True:
-    raw = input("Score 0–100: ")
-    if raw.isdigit() and 0 <= int(raw) <= 100:
-        print("Got", int(raw)); break
-    print("Try again.")
+def depth(xs):
+    if not isinstance(xs, list):
+        return 0                              # a non-list has no nesting
+    return 1 + max((depth(x) for x in xs), default=0)
+print(depth([1, [2, [3, [4]]]]), depth([1, 2, 3]), depth(5))   # 4 1 0
 
-# 5  Removing while iterating shifts indices, so elements get skipped.
-xs = [x for x in xs if x % 2 != 0]            # build a new list instead -> [1, 3]
+# 5
+# 1) No reachable base case -> the calls never stop -> stack overflows.
+#    Fix: add `if n == 0: return 0` (or n <= 0) at the top.
+# 2) The recursive case computes n*fact(n-1) but never RETURNs it,
+#    so the function falls off the end and returns None. Add `return`.
+# 3) A loop is better when the work is a simple flat sequence, or when the
+#    depth could exceed ~1000 (Python has no tail-call optimization, so deep
+#    recursion hits RecursionError where a loop would be fine).
 ```
