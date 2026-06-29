@@ -205,33 +205,42 @@ def build_half(n: int, part: str) -> dict:
     return _nb(cells)
 
 
-def build_scratch() -> dict:
-    """A blank sandbox notebook for the 'Try it yourself' slot."""
+def build_try(n: int) -> dict:
+    """The 'Try it yourself' sandbox: this session's editable example snippets + a blank cell."""
     _counter[0] = 0
-    cells = [
-        md("# Scratch notebook\n\nYour own playground — type Python and press "
-           "**Shift + Enter** to run.\n\n" + TIPS),
-        code("# Try anything here.\n"),
-    ]
+    snippets = _bs.PLAYGROUNDS.get(n, [])
+    intro = (f"# Session {n} — Try it yourself\n\n"
+             "Your sandbox. Every cell below is an example from this session, ready to edit. "
+             "**Predict** the output, run it with **Shift + Enter**, then change one thing and "
+             "run again — the surprise is the lesson. The empty cell at the end is yours.\n\n" + TIPS)
+    cells = [md(intro)]
+    for snip in snippets:
+        title = snip.get("title", "")
+        if title:
+            cells.append(md(f"### {title}"))
+        cells.append(code(snip["code"].rstrip("\n")))
+    cells.append(md("### Your turn\n\nA blank cell to experiment freely:"))
+    cells.append(code("# Type anything here.\n"))
     return _nb(cells)
 
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
+    # Drop the old shared blank sandbox (replaced by per-session try-it notebooks).
+    (OUT / "scratch.ipynb").unlink(missing_ok=True)
     count = 0
     for n, title, desc, _key in SESSIONS:
         variants = {
             f"session-{n:02d}": build_notebook(n, title, desc),
             f"session-{n:02d}-a": build_half(n, "A"),
             f"session-{n:02d}-b": build_half(n, "B"),
+            f"session-{n:02d}-try": build_try(n),
         }
         for stem, nb in variants.items():
             (OUT / f"{stem}.ipynb").write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n")
             count += 1
-    (OUT / "scratch.ipynb").write_text(json.dumps(build_scratch(), indent=1, ensure_ascii=False) + "\n")
-    count += 1
     print(f"Wrote {count} notebooks to {OUT.relative_to(ROOT)}/ "
-          f"({len(SESSIONS)} full + {2*len(SESSIONS)} halves + 1 scratch)")
+          f"({len(SESSIONS)} full + {2*len(SESSIONS)} halves + {len(SESSIONS)} try-it)")
 
 
 if __name__ == "__main__":

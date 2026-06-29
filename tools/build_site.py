@@ -561,7 +561,7 @@ def build_session(n: int, title: str, slides_dir: Path, examples_dir: Path, quiz
     # notebooks rather than on the page: three lazy-loaded JupyterLite slots.
     slot_a = embed_slot("Practice — Part A", lite_for(f"{stem}-a"), colab_for(f"{stem}-a"))
     slot_b = embed_slot("Practice — Part B", lite_for(f"{stem}-b"), colab_for(f"{stem}-b"))
-    slot_try = embed_slot("Try it yourself", lite_for("scratch"), COLAB_BLANK)
+    slot_try = embed_slot("Try it yourself", lite_for(f"{stem}-try"), colab_for(f"{stem}-try"))
 
     if lesson_b:   # the normal case: two interleaved halves
         lesson_html = (
