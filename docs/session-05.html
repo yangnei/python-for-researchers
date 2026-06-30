@@ -365,12 +365,12 @@ Read each snippet and decide what it does **before** you reveal the answer. To r
 **1.**
 
 ```python
-gen = (n * n for n in range(3))
-first = list(gen)
-list(gen)
+gpas = (s for s in [3.9, 1.8, 3.2])
+first_pass = list(gpas)
+list(gpas)
 ```
 
-Most people expect `[0, 1, 4] again`.
+Most people expect `the same GPAs again`.
 
 <details><summary>Reveal the result</summary>
 
@@ -390,12 +390,13 @@ A generator is one-shot: after the first full pass it is exhausted. Rebuild it, 
 from dataclasses import dataclass
 
 @dataclass
-class Pt:
-    x: int
+class Grade:
+    course: str
+    score: int
 
-p1 = Pt(1)
-p2 = Pt(1)
-p1 == p2
+g1 = Grade('ED101', 91)
+g2 = Grade('ED101', 91)
+g1 == g2
 ```
 
 Most people expect `False — two different objects`.
@@ -404,7 +405,7 @@ Most people expect `False — two different objects`.
 
 &rarr; `True`
 
-`@dataclass` writes an `__eq__` that compares fields, so equal-valued instances are `==` (even though `p1 is p2` is False).
+`@dataclass` writes an `__eq__` that compares fields, so equal-valued grades are `==` (even though `g1 is g2` is False).
 
 </details>
 
@@ -416,17 +417,17 @@ Most people expect `False — two different objects`.
 
 ```python
 import re
-m = re.match(r'<(.+)>', '<a><b>')
+m = re.match(r'\[(.+)\]', '[ED101][ED102]')
 m.group(1)
 ```
 
-Most people expect `'a'`.
+Most people expect `'ED101'`.
 
 <details><summary>Reveal the result</summary>
 
-&rarr; `'a><b'`
+&rarr; `'ED101][ED102'`
 
-`+` is greedy — it grabs as much as it can. Use `+?` for the shortest match: `r'<(.+?)>'`.
+`+` is greedy — it grabs as much as it can. Use `+?` for the shortest match: `r'\[(.+?)\]'`.
 
 </details>
 
@@ -438,10 +439,10 @@ Most people expect `'a'`.
 
 ```python
 import re
-bool(re.match(r'\d+', 'abc123'))
+bool(re.match(r'\d+', 'cohort2026'))
 ```
 
-Most people expect `True — there are digits`.
+Most people expect `True — there's a number in there`.
 
 <details><summary>Reveal the result</summary>
 
@@ -458,24 +459,24 @@ Most people expect `True — there are digits`.
 **5.**
 
 ```python
-class Dog:
-    tricks = []
-    def teach(self, t):
-        self.tricks.append(t)
+class Course:
+    students = []
+    def enroll(self, name):
+        self.students.append(name)
 
-a = Dog()
-b = Dog()
-a.teach('sit')
-b.tricks
+art = Course()
+math = Course()
+art.enroll('Ana')
+math.students
 ```
 
-Most people expect `[] — b is a different dog`.
+Most people expect `[] — math is a different course`.
 
 <details><summary>Reveal the result</summary>
 
-&rarr; `['sit']`
+&rarr; `['Ana']`
 
-`tricks` is a CLASS variable shared by every instance. Give each its own in `__init__`: `self.tricks = []`.
+`students` is a CLASS variable shared by every instance. Give each its own in `__init__`: `self.students = []`.
 
 </details>
 

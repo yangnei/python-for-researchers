@@ -343,7 +343,8 @@ Read each snippet and decide what it does **before** you reveal the answer. To r
 **1.**
 
 ```python
-int('3.0')
+cell = '3.0'   # a value from a CSV
+int(cell)
 ```
 
 Most people expect `3`.
@@ -352,7 +353,7 @@ Most people expect `3`.
 
 &rarr; `ValueError: invalid literal for int() with base 10: '3.0'`
 
-`int()` parses INTEGER text only; '3.0' is not a valid int literal. Use `int(float('3.0'))`.
+`int()` parses INTEGER text only; '3.0' is not a valid int literal. Use `int(float(cell))`.
 
 </details>
 
@@ -363,7 +364,8 @@ Most people expect `3`.
 **2.**
 
 ```python
-round(2.5)
+measurement = 2.5
+round(measurement)
 ```
 
 Most people expect `3`.
@@ -383,7 +385,8 @@ Python uses banker's rounding (round half to EVEN): `round(2.5) == 2` but `round
 **3.**
 
 ```python
-0.1 + 0.2 + 0.3 == 0.6
+total = 0.1 + 0.2 + 0.3   # three measured values
+total == 0.6
 ```
 
 Most people expect `True`.
@@ -403,7 +406,8 @@ Float error accumulates when you total measurements: 0.1+0.2+0.3 is 0.6000000000
 **4.**
 
 ```python
-int('1_000')
+enrolment = '1_000'
+int(enrolment)
 ```
 
 Most people expect `ValueError`.

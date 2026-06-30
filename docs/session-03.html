@@ -345,20 +345,20 @@ Read each snippet and decide what it does **before** you reveal the answer. To r
 **1.**
 
 ```python
-def add(item, bag=[]):
-    bag.append(item)
-    return bag
-add('apple')
-add('banana')
+def enroll(name, roster=[]):
+    roster.append(name)
+    return roster
+enroll('Ana')
+enroll('Ben')
 ```
 
-Most people expect `['banana'] — a fresh empty bag each call`.
+Most people expect `['Ben'] — a fresh empty roster each call`.
 
 <details><summary>Reveal the result</summary>
 
-&rarr; `['apple', 'banana']`
+&rarr; `['Ana', 'Ben']`
 
-A default value is created ONCE, at def time, so the same list persists across calls. Use `bag=None` then `bag = bag or []`.
+A default value is created ONCE, at def time, so the same list persists across calls. Use `roster=None` then `roster = roster or []`.
 
 </details>
 
@@ -369,12 +369,12 @@ A default value is created ONCE, at def time, so the same list persists across c
 **2.**
 
 ```python
-def show(x):
-    print(x)
-show(42) is None
+def show_score(s):
+    print(s)
+show_score(91) is None
 ```
 
-Most people expect `False — it clearly produced 42`.
+Most people expect `False — it clearly produced 91`.
 
 <details><summary>Reveal the result</summary>
 
@@ -391,8 +391,8 @@ Printing is not returning. A function with no `return` gives `None`.
 **3.**
 
 ```python
-funcs = [lambda: i for i in range(3)]
-[f() for f in funcs]
+makers = [lambda: week for week in range(3)]
+[make() for make in makers]
 ```
 
 Most people expect `[0, 1, 2]`.
@@ -401,7 +401,7 @@ Most people expect `[0, 1, 2]`.
 
 &rarr; `[2, 2, 2]`
 
-Closures capture the VARIABLE `i`, not its value; by call time the loop has left `i = 2`. Fix by binding it: `lambda i=i: i`.
+Closures capture the VARIABLE `week`, not its value; by call time the loop has left `week = 2`. Fix by binding it: `lambda week=week: week`.
 
 </details>
 
@@ -412,9 +412,9 @@ Closures capture the VARIABLE `i`, not its value; by call time the loop has left
 **4.**
 
 ```python
-def f(n):
-    return f(n - 1)
-f(3)
+def countdown(n):
+    return countdown(n - 1)   # no base case!
+countdown(3)
 ```
 
 Most people expect `runs forever, or 0`.

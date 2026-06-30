@@ -9,8 +9,10 @@ expectation. The same dataset is rendered three ways by the build tools:
                        result) with a collapsed "why";
   * the student PDF -> the code, result, and why shown inline (printed ref).
 
-The *result* is never hand-written: `reveal()` runs `setup` then evaluates
-`code`, so the answer shown is always what Python actually does. Keeping the
+The examples are grounded in the learner's world (students, scores, rosters,
+survey cells, gradebooks) so the surprise lands on something concrete. The
+*result* is never hand-written: `reveal()` runs `setup` then evaluates `code`,
+so the answer shown is always what Python actually does. Keeping the
 expression as the cell's last line means a notebook auto-displays it on run.
 
 Schema per trap:  {"setup": <statements, optional>, "code": <one expression>,
@@ -26,174 +28,197 @@ import warnings
 TRAPS: dict[int, list[dict]] = {
     # ---- Session 1 — Types & the dynamic-typing traps -------------------
     1: [
-        {"setup": "a = [1, 2]\nb = [1, 2]",
-         "code": "a is b",
-         "expect": "True — the lists are equal",
-         "why": "`==` compares VALUES; `is` compares IDENTITY (the object in memory). "
-                "Two equal-looking lists are still different objects. Use `==` for values "
-                "and keep `is` for `None`."},
-        {"setup": "a = [1, 2]\nb = a\na.append(3)",
-         "code": "b",
-         "expect": "[1, 2] — we only touched a",
-         "why": "`b = a` binds the SAME list, not a copy, so mutating through `a` shows up "
-                "through `b`. Copy with `list(a)` or `a[:]`."},
-        {"code": "True == 1",
-         "expect": "False — they are different types",
-         "why": "`bool` is a subclass of `int`: `True == 1` and `False == 0`."},
-        {"code": "5 + True",
-         "expect": "TypeError — you can't add a bool to an int",
-         "why": "`True` acts as `1` (and `False` as `0`) in arithmetic, so `5 + True == 6`."},
-        {"setup": "flags = [True, False, True, True]",
-         "code": "sum(flags)",
+        {"setup": "ana_scores = [88, 91]\nben_scores = [88, 91]",
+         "code": "ana_scores is ben_scores",
+         "expect": "True — the two lists are identical",
+         "why": "`==` compares VALUES (and `ana_scores == ben_scores` is True); `is` compares "
+                "IDENTITY — whether they are the same object in memory. Ana's and Ben's lists "
+                "just happen to match. Use `==` for values and keep `is` for `None`."},
+        {"setup": "roster = ['Ana', 'Ben']\nbackup = roster\nroster.append('Cara')",
+         "code": "backup",
+         "expect": "['Ana', 'Ben'] — backup was taken before Cara",
+         "why": "`backup = roster` does not copy: both names point at one list, so appending "
+                "through `roster` shows up in `backup` too. Copy with `list(roster)` or "
+                "`roster[:]`."},
+        {"setup": "attended = True",
+         "code": "attended == 1",
+         "expect": "False — a yes/no flag isn't a number",
+         "why": "`bool` is a subclass of `int`: `True == 1` and `False == 0`, which is why a "
+                "spreadsheet's 1/0 lines up with Python's True/False."},
+        {"setup": "base_score = 5\nbonus = True",
+         "code": "base_score + bonus",
+         "expect": "TypeError — you can't add a flag to a number",
+         "why": "`True` acts as `1` (and `False` as `0`) in arithmetic — a quick way to add a "
+                "bonus point for a flag."},
+        {"setup": "passed = [True, False, True, True]",
+         "code": "sum(passed)",
          "expect": "an error, or 0",
-         "why": "Summing booleans counts the `True`s — a handy way to count how many "
-                "tests passed."},
-        {"code": "0.1 + 0.2",
+         "why": "Summing booleans counts the `True`s — a handy way to count how many students "
+                "passed."},
+        {"setup": "reading_a = 0.1\nreading_b = 0.2",
+         "code": "reading_a + reading_b",
          "expect": "0.3",
-         "why": "Floats are stored in binary, where 0.1 and 0.2 have no exact "
-                "representation, so the tiny errors add up."},
-        {"code": "0.1 + 0.2 == 0.3",
+         "why": "Floats are stored in binary, where 0.1 and 0.2 have no exact representation, "
+                "so the tiny errors add up."},
+        {"setup": "total = 0.1 + 0.2",
+         "code": "total == 0.3",
          "expect": "True",
-         "why": "Because `0.1 + 0.2` is `0.30000000000000004`. Never test floats with `==`; "
-                "use `math.isclose(a, b)`."},
-        {"setup": "nan = float('nan')",
-         "code": "nan == nan",
+         "why": "Because `0.1 + 0.2` is `0.30000000000000004`. Never test measured values with "
+                "`==`; use `math.isclose(a, b)`."},
+        {"setup": "missing_score = float('nan')",
+         "code": "missing_score == missing_score",
          "expect": "True — it is the very same value",
-         "why": "`NaN` is defined to be equal to nothing, not even itself. Test it with "
-                "`math.isnan(x)`."},
-        {"code": "7 / 2",
+         "why": "`NaN` (a missing/invalid number) is defined to equal nothing, not even itself. "
+                "Test it with `math.isnan(x)`."},
+        {"setup": "points = 7",
+         "code": "points / 2",
          "expect": "3",
-         "why": "`/` is always float (true) division. Use `//` for floor division."},
-        {"code": "-7 // 2",
-         "expect": "-3 (chop toward zero)",
+         "why": "`/` is always float (true) division. Use `//` when you want a whole number."},
+        {"setup": "net = -7",
+         "code": "net // 2",
+         "expect": "-3 (just chop off the decimal)",
          "why": "`//` floors toward negative infinity, not toward zero, so `-7 // 2 == -4`."},
-        {"code": "5 == '5'",
+        {"setup": "cell = '5'   # a value read from a CSV",
+         "code": "cell == 5",
          "expect": "True — same digit",
-         "why": "Python does no automatic number/text conversion, so a number and a string "
-                "are simply unequal (no error)."},
-        {"code": "5 > '5'",
+         "why": "Python does no automatic text/number conversion, so a CSV string and a number "
+                "are simply unequal (no error). Convert first: `int(cell) == 5`."},
+        {"setup": "cell = '5'",
+         "code": "5 > cell",
          "expect": "False (or maybe True)",
-         "why": "Ordering a number against text raises TypeError — there is no sensible "
-                "order. Convert first: `5 > int('5')`."},
-        {"code": "[1, 2] == (1, 2)",
-         "expect": "True — same elements",
+         "why": "Ordering a number against text raises TypeError — there is no sensible order. "
+                "Convert first: `5 > int(cell)`."},
+        {"setup": "as_list = [88, 91]\nas_tuple = (88, 91)",
+         "code": "as_list == as_tuple",
+         "expect": "True — same numbers",
          "why": "A list never equals a tuple, whatever the contents."},
-        {"code": "type(True) is int",
+        {"setup": "flag = True",
+         "code": "type(flag) is int",
          "expect": "True — bools are ints",
-         "why": "`type()` is exact and `True`'s type is `bool`, not `int`. Use `isinstance` "
-                "when you want subclass-aware checks."},
-        {"code": "isinstance(True, int)",
+         "why": "`type()` is exact, and `flag`'s type is `bool`, not `int`. Use `isinstance` when "
+                "you want subclass-aware checks."},
+        {"setup": "flag = True",
+         "code": "isinstance(flag, int)",
          "expect": "False — it's a bool, not an int",
          "why": "`isinstance` respects subclassing, and `bool` IS a kind of `int`."},
-        {"code": "bool('0')",
+        {"setup": "response = '0'   # what a respondent typed",
+         "code": "bool(response)",
          "expect": "False — it's zero",
          "why": "Any NON-EMPTY string is truthy, including '0' and 'False'. Only the empty "
-                "string is falsy."},
-        {"code": "bool([])",
+                "string is falsy — so convert survey text before testing it."},
+        {"setup": "submissions = []",
+         "code": "bool(submissions)",
          "expect": "True — the list exists",
-         "why": "Empty containers (`[]`, `{}`, `''`, `0`, `None`) are all falsy."},
-        {"setup": "m = int('257')\np = int('257')",
-         "code": "m is p",
+         "why": "Empty containers (`[]`, `{}`, `''`, `0`, `None`) are all falsy, which is why "
+                "`if submissions:` reads as 'are there any?'."},
+        {"setup": "id_a = int('257')\nid_b = int('257')   # two IDs parsed from text",
+         "code": "id_a is id_b",
          "expect": "True — same number",
-         "why": "CPython pre-caches small ints (-5..256), so `is` accidentally looks True "
-                "there; 257 built at runtime are separate objects. Compare values with `==`, "
-                "never `is`."},
+         "why": "CPython pre-caches small ints (-5..256), so `is` accidentally looks True there; "
+                "257 built at runtime are separate objects. Compare values with `==`, never "
+                "`is`."},
     ],
     # ---- Session 2 — Control flow & data structures ---------------------
     2: [
-        {"code": "5 and 0",
+        {"setup": "typed_name = ''   # the user left the box blank",
+         "code": "typed_name or 'Anonymous'",
          "expect": "True or False",
-         "why": "`and`/`or` return one of the OPERANDS, not a bool: `and` yields the first "
-                "falsy value (else the last), `or` the first truthy."},
-        {"code": "list(range(1, 5))",
+         "why": "`or` returns the first truthy OPERAND (else the last), and `and` the first "
+                "falsy — not a bool. This is the default-value idiom."},
+        {"setup": "weeks = range(1, 5)",
+         "code": "list(weeks)",
          "expect": "[1, 2, 3, 4, 5]",
-         "why": "`range(start, stop)` stops BEFORE `stop`."},
-        {"setup": "grid = [[0] * 3] * 3\ngrid[0][0] = 9",
-         "code": "grid",
-         "expect": "[[9, 0, 0], [0, 0, 0], [0, 0, 0]]",
-         "why": "`[[0]*3]*3` makes three references to ONE inner row, so editing one edits "
-                "all. Build with `[[0]*3 for _ in range(3)]`."},
+         "why": "`range(start, stop)` stops BEFORE `stop`, so weeks 1–4 here."},
+        {"setup": "gradebook = [[0] * 3] * 3   # 3 students x 3 assignments\ngradebook[0][0] = 9",
+         "code": "gradebook",
+         "expect": "only the first student's first score changes",
+         "why": "`[[0]*3]*3` makes three references to ONE inner row, so editing one edits all. "
+                "Build with `[[0]*3 for _ in range(3)]`."},
         {"setup": "scores = [55, 92, 78]",
          "code": "all(s >= 60 for s in scores)",
          "expect": "True",
          "why": "`all()` is True only if EVERY item passes; 55 fails, so it's False."},
-        {"setup": "d = {'Ana': 91}",
-         "code": "d.get('Ben')",
+        {"setup": "gpa = {'Ana': 3.9}",
+         "code": "gpa.get('Ben')",
          "expect": "KeyError",
-         "why": "`.get()` returns `None` (or a default) for a missing key instead of raising "
-                "— unlike `d['Ben']`."},
-        {"setup": "nums = [1, 2, 3, 4]",
-         "code": "nums[::-1]",
+         "why": "`.get()` returns `None` (or a default) for a missing key instead of raising — "
+                "unlike `gpa['Ben']`."},
+        {"setup": "ranking = ['Ana', 'Ben', 'Cara']",
+         "code": "ranking[::-1]",
          "expect": "an error, or the same list",
          "why": "A slice with step -1 returns a reversed COPY — a common Python idiom."},
     ],
     # ---- Session 3 — Functions, scope & recursion -----------------------
     3: [
-        {"setup": "def add(item, bag=[]):\n    bag.append(item)\n    return bag\nadd('apple')",
-         "code": "add('banana')",
-         "expect": "['banana'] — a fresh empty bag each call",
-         "why": "A default value is created ONCE, at def time, so the same list persists "
-                "across calls. Use `bag=None` then `bag = bag or []`."},
-        {"setup": "def show(x):\n    print(x)",
-         "code": "show(42) is None",
-         "expect": "False — it clearly produced 42",
+        {"setup": "def enroll(name, roster=[]):\n    roster.append(name)\n    return roster\nenroll('Ana')",
+         "code": "enroll('Ben')",
+         "expect": "['Ben'] — a fresh empty roster each call",
+         "why": "A default value is created ONCE, at def time, so the same list persists across "
+                "calls. Use `roster=None` then `roster = roster or []`."},
+        {"setup": "def show_score(s):\n    print(s)",
+         "code": "show_score(91) is None",
+         "expect": "False — it clearly produced 91",
          "why": "Printing is not returning. A function with no `return` gives `None`."},
-        {"setup": "funcs = [lambda: i for i in range(3)]",
-         "code": "[f() for f in funcs]",
+        {"setup": "makers = [lambda: week for week in range(3)]",
+         "code": "[make() for make in makers]",
          "expect": "[0, 1, 2]",
-         "why": "Closures capture the VARIABLE `i`, not its value; by call time the loop has "
-                "left `i = 2`. Fix by binding it: `lambda i=i: i`."},
-        {"setup": "def f(n):\n    return f(n - 1)",
-         "code": "f(3)",
+         "why": "Closures capture the VARIABLE `week`, not its value; by call time the loop has "
+                "left `week = 2`. Fix by binding it: `lambda week=week: week`."},
+        {"setup": "def countdown(n):\n    return countdown(n - 1)   # no base case!",
+         "code": "countdown(3)",
          "expect": "runs forever, or 0",
          "why": "Every recursive function needs a base case. Without one Python stops at its "
                 "recursion limit (~1000 deep) with RecursionError."},
     ],
     # ---- Session 4 — Exceptions, files & research data ------------------
     4: [
-        {"code": "int('3.0')",
+        {"setup": "cell = '3.0'   # a value from a CSV",
+         "code": "int(cell)",
          "expect": "3",
          "why": "`int()` parses INTEGER text only; '3.0' is not a valid int literal. "
-                "Use `int(float('3.0'))`."},
-        {"code": "round(2.5)",
+                "Use `int(float(cell))`."},
+        {"setup": "measurement = 2.5",
+         "code": "round(measurement)",
          "expect": "3",
          "why": "Python uses banker's rounding (round half to EVEN): `round(2.5) == 2` but "
                 "`round(3.5) == 4`. Watch this when summarising data."},
-        {"code": "0.1 + 0.2 + 0.3 == 0.6",
+        {"setup": "total = 0.1 + 0.2 + 0.3   # three measured values",
+         "code": "total == 0.6",
          "expect": "True",
          "why": "Float error accumulates when you total measurements: 0.1+0.2+0.3 is "
                 "0.6000000000000001. Compare sums with `math.isclose`, or round for display."},
-        {"code": "int('1_000')",
+        {"setup": "enrolment = '1_000'",
+         "code": "int(enrolment)",
          "expect": "ValueError",
          "why": "Python accepts underscores as digit separators, even inside `int()` text."},
     ],
     # ---- Session 5 — Regex, modules & OOP -------------------------------
     5: [
-        {"setup": "gen = (n * n for n in range(3))\nfirst = list(gen)",
-         "code": "list(gen)",
-         "expect": "[0, 1, 4] again",
+        {"setup": "gpas = (s for s in [3.9, 1.8, 3.2])\nfirst_pass = list(gpas)",
+         "code": "list(gpas)",
+         "expect": "the same GPAs again",
          "why": "A generator is one-shot: after the first full pass it is exhausted. "
                 "Rebuild it, or store a list if you need it twice."},
-        {"setup": "from dataclasses import dataclass\n\n@dataclass\nclass Pt:\n    x: int\n\np1 = Pt(1)\np2 = Pt(1)",
-         "code": "p1 == p2",
+        {"setup": "from dataclasses import dataclass\n\n@dataclass\nclass Grade:\n    course: str\n    score: int\n\ng1 = Grade('ED101', 91)\ng2 = Grade('ED101', 91)",
+         "code": "g1 == g2",
          "expect": "False — two different objects",
-         "why": "`@dataclass` writes an `__eq__` that compares fields, so equal-valued "
-                "instances are `==` (even though `p1 is p2` is False)."},
-        {"setup": "import re\nm = re.match(r'<(.+)>', '<a><b>')",
+         "why": "`@dataclass` writes an `__eq__` that compares fields, so equal-valued grades "
+                "are `==` (even though `g1 is g2` is False)."},
+        {"setup": "import re\nm = re.match(r'\\[(.+)\\]', '[ED101][ED102]')",
          "code": "m.group(1)",
-         "expect": "'a'",
-         "why": "`+` is greedy — it grabs as much as it can. Use `+?` for the shortest "
-                "match: `r'<(.+?)>'`."},
+         "expect": "'ED101'",
+         "why": "`+` is greedy — it grabs as much as it can. Use `+?` for the shortest match: "
+                "`r'\\[(.+?)\\]'`."},
         {"setup": "import re",
-         "code": "bool(re.match(r'\\d+', 'abc123'))",
-         "expect": "True — there are digits",
-         "why": "`re.match` anchors at the START of the string. Use `re.search` to find a "
-                "match anywhere."},
-        {"setup": "class Dog:\n    tricks = []\n    def teach(self, t):\n        self.tricks.append(t)\n\na = Dog()\nb = Dog()\na.teach('sit')",
-         "code": "b.tricks",
-         "expect": "[] — b is a different dog",
-         "why": "`tricks` is a CLASS variable shared by every instance. Give each its own in "
-                "`__init__`: `self.tricks = []`."},
+         "code": "bool(re.match(r'\\d+', 'cohort2026'))",
+         "expect": "True — there's a number in there",
+         "why": "`re.match` anchors at the START of the string. Use `re.search` to find a match "
+                "anywhere."},
+        {"setup": "class Course:\n    students = []\n    def enroll(self, name):\n        self.students.append(name)\n\nart = Course()\nmath = Course()\nart.enroll('Ana')",
+         "code": "math.students",
+         "expect": "[] — math is a different course",
+         "why": "`students` is a CLASS variable shared by every instance. Give each its own in "
+                "`__init__`: `self.students = []`."},
     ],
 }
 

@@ -350,16 +350,17 @@ Read each snippet and decide what it does **before** you reveal the answer. To r
 **1.**
 
 ```python
-5 and 0
+typed_name = ''   # the user left the box blank
+typed_name or 'Anonymous'
 ```
 
 Most people expect `True or False`.
 
 <details><summary>Reveal the result</summary>
 
-&rarr; `0`
+&rarr; `'Anonymous'`
 
-`and`/`or` return one of the OPERANDS, not a bool: `and` yields the first falsy value (else the last), `or` the first truthy.
+`or` returns the first truthy OPERAND (else the last), and `and` the first falsy — not a bool. This is the default-value idiom.
 
 </details>
 
@@ -370,7 +371,8 @@ Most people expect `True or False`.
 **2.**
 
 ```python
-list(range(1, 5))
+weeks = range(1, 5)
+list(weeks)
 ```
 
 Most people expect `[1, 2, 3, 4, 5]`.
@@ -379,7 +381,7 @@ Most people expect `[1, 2, 3, 4, 5]`.
 
 &rarr; `[1, 2, 3, 4]`
 
-`range(start, stop)` stops BEFORE `stop`.
+`range(start, stop)` stops BEFORE `stop`, so weeks 1–4 here.
 
 </details>
 
@@ -390,12 +392,12 @@ Most people expect `[1, 2, 3, 4, 5]`.
 **3.**
 
 ```python
-grid = [[0] * 3] * 3
-grid[0][0] = 9
-grid
+gradebook = [[0] * 3] * 3   # 3 students x 3 assignments
+gradebook[0][0] = 9
+gradebook
 ```
 
-Most people expect `[[9, 0, 0], [0, 0, 0], [0, 0, 0]]`.
+Most people expect `only the first student's first score changes`.
 
 <details><summary>Reveal the result</summary>
 
@@ -433,8 +435,8 @@ Most people expect `True`.
 **5.**
 
 ```python
-d = {'Ana': 91}
-d.get('Ben')
+gpa = {'Ana': 3.9}
+gpa.get('Ben')
 ```
 
 Most people expect `KeyError`.
@@ -443,7 +445,7 @@ Most people expect `KeyError`.
 
 &rarr; `None`
 
-`.get()` returns `None` (or a default) for a missing key instead of raising — unlike `d['Ben']`.
+`.get()` returns `None` (or a default) for a missing key instead of raising — unlike `gpa['Ben']`.
 
 </details>
 
@@ -454,15 +456,15 @@ Most people expect `KeyError`.
 **6.**
 
 ```python
-nums = [1, 2, 3, 4]
-nums[::-1]
+ranking = ['Ana', 'Ben', 'Cara']
+ranking[::-1]
 ```
 
 Most people expect `an error, or the same list`.
 
 <details><summary>Reveal the result</summary>
 
-&rarr; `[4, 3, 2, 1]`
+&rarr; `['Cara', 'Ben', 'Ana']`
 
 A slice with step -1 returns a reversed COPY — a common Python idiom.
 
