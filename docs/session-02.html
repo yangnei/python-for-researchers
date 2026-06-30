@@ -39,6 +39,15 @@
     </div>
     <div class="nb-embed" hidden></div>
   </section>
+  <div id="traps" class="md"></div>
+
+  <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-02-traps.ipynb">
+    <div class="nb-slot-bar">
+      <button class="nb-btn nb-primary" type="button" data-nb-embed aria-expanded="false">&#9656; Traps — predict, then run</button>
+      <a class="nb-btn" href="https://colab.research.google.com/github/yangnei/learn-python/blob/main/docs/notebooks/session-02-traps.ipynb" target="_blank" rel="noopener">Open in Colab &#8599;</a>
+    </div>
+    <div class="nb-embed" hidden></div>
+  </section>
 
   <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-02-try.ipynb">
     <div class="nb-slot-bar">
@@ -114,8 +123,8 @@ not flagged              # negate
 And `and`/`or` return an **operand, not a bool**:
 
 ```python
-5 and 0        # 0
-"" or "N/A"    # "N/A"   ← default-value idiom
+5 and 0        # ?  ← predict, then reveal in Traps below
+"" or "N/A"    # the default-value idiom
 ```
 
 So write `if x:` — never `if x == True`.
@@ -301,7 +310,7 @@ sorted(roster, key=lambda s: s["score"], reverse=True) # descending
 a = [1, 2, 3]
 b = a                # SAME list
 a.append(4)
-b                    # [1, 2, 3, 4]  😱
+b                    # ?  😱  ← predict (see Traps below)
 
 b = a.copy()         # ✅ independent copy
 ```
@@ -330,6 +339,136 @@ b = a.copy()         # ✅ independent copy
 ## Summary
 You can store, look up, dedup, sort, and reshape data.
 **Next:** Functions, scope & recursion.
+
+</script>
+<script type="text/markdown" id="traps-md">
+## Traps — predict, then reveal
+Read each snippet and decide what it does **before** you reveal the answer. To run and tinker with them line by line, open **&#9656; Traps — predict, then run** just below.
+
+<div class="trap">
+
+**1.**
+
+```python
+5 and 0
+```
+
+Most people expect `True or False`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `0`
+
+`and`/`or` return one of the OPERANDS, not a bool: `and` yields the first falsy value (else the last), `or` the first truthy.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**2.**
+
+```python
+list(range(1, 5))
+```
+
+Most people expect `[1, 2, 3, 4, 5]`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `[1, 2, 3, 4]`
+
+`range(start, stop)` stops BEFORE `stop`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**3.**
+
+```python
+grid = [[0] * 3] * 3
+grid[0][0] = 9
+grid
+```
+
+Most people expect `[[9, 0, 0], [0, 0, 0], [0, 0, 0]]`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `[[9, 0, 0], [9, 0, 0], [9, 0, 0]]`
+
+`[[0]*3]*3` makes three references to ONE inner row, so editing one edits all. Build with `[[0]*3 for _ in range(3)]`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**4.**
+
+```python
+scores = [55, 92, 78]
+all(s >= 60 for s in scores)
+```
+
+Most people expect `True`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+`all()` is True only if EVERY item passes; 55 fails, so it's False.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**5.**
+
+```python
+d = {'Ana': 91}
+d.get('Ben')
+```
+
+Most people expect `KeyError`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `None`
+
+`.get()` returns `None` (or a default) for a missing key instead of raising — unlike `d['Ben']`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**6.**
+
+```python
+nums = [1, 2, 3, 4]
+nums[::-1]
+```
+
+Most people expect `an error, or the same list`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `[4, 3, 2, 1]`
+
+A slice with step -1 returns a reversed COPY — a common Python idiom.
+
+</details>
+
+</div>
 
 </script>
 <script type="text/markdown" id="quiz-md">

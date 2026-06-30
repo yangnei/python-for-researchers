@@ -57,8 +57,8 @@ not flagged              # negate
 And `and`/`or` return an **operand, not a bool**:
 
 ```python
-5 and 0        # 0
-"" or "N/A"    # "N/A"   ← default-value idiom
+5 and 0        # ?  ← predict, then reveal in Traps below
+"" or "N/A"    # the default-value idiom
 ```
 
 So write `if x:` — never `if x == True`.
@@ -245,7 +245,7 @@ sorted(roster, key=lambda s: s["score"], reverse=True) # descending
 a = [1, 2, 3]
 b = a                # SAME list
 a.append(4)
-b                    # [1, 2, 3, 4]  😱
+b                    # ?  😱  ← predict (see Traps below)
 
 b = a.copy()         # ✅ independent copy
 ```

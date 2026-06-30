@@ -83,8 +83,8 @@ def add_student(name, roster=[]):    # ❌
     roster.append(name)
     return roster
 
-add_student("Ana")    # ['Ana']
-add_student("Ben")    # ['Ana', 'Ben']  — the list PERSISTS!
+add_student("Ana")    # ?
+add_student("Ben")    # ?  ← does the list persist? (Traps below)
 ```
 
 The default `[]` is created **once**, at definition. Fix on next slide.

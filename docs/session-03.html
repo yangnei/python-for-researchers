@@ -39,6 +39,15 @@
     </div>
     <div class="nb-embed" hidden></div>
   </section>
+  <div id="traps" class="md"></div>
+
+  <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-03-traps.ipynb">
+    <div class="nb-slot-bar">
+      <button class="nb-btn nb-primary" type="button" data-nb-embed aria-expanded="false">&#9656; Traps — predict, then run</button>
+      <a class="nb-btn" href="https://colab.research.google.com/github/yangnei/learn-python/blob/main/docs/notebooks/session-03-traps.ipynb" target="_blank" rel="noopener">Open in Colab &#8599;</a>
+    </div>
+    <div class="nb-embed" hidden></div>
+  </section>
 
   <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-03-try.ipynb">
     <div class="nb-slot-bar">
@@ -140,8 +149,8 @@ def add_student(name, roster=[]):    # ❌
     roster.append(name)
     return roster
 
-add_student("Ana")    # ['Ana']
-add_student("Ben")    # ['Ana', 'Ben']  — the list PERSISTS!
+add_student("Ana")    # ?
+add_student("Ben")    # ?  ← does the list persist? (Traps below)
 ```
 
 The default `[]` is created **once**, at definition. Fix on next slide.
@@ -319,6 +328,100 @@ Python has **no tail-call optimization** — every call keeps its frame
 ## Summary
 You can solve problems that are defined in terms of themselves — especially nested data.
 **Next:** Exceptions, files & research data.
+
+</script>
+<script type="text/markdown" id="traps-md">
+## Traps — predict, then reveal
+Read each snippet and decide what it does **before** you reveal the answer. To run and tinker with them line by line, open **&#9656; Traps — predict, then run** just below.
+
+<div class="trap">
+
+**1.**
+
+```python
+def add(item, bag=[]):
+    bag.append(item)
+    return bag
+add('apple')
+add('banana')
+```
+
+Most people expect `['banana'] — a fresh empty bag each call`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `['apple', 'banana']`
+
+A default value is created ONCE, at def time, so the same list persists across calls. Use `bag=None` then `bag = bag or []`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**2.**
+
+```python
+def show(x):
+    print(x)
+show(42) is None
+```
+
+Most people expect `False — it clearly produced 42`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `True`
+
+Printing is not returning. A function with no `return` gives `None`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**3.**
+
+```python
+funcs = [lambda: i for i in range(3)]
+[f() for f in funcs]
+```
+
+Most people expect `[0, 1, 2]`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `[2, 2, 2]`
+
+Closures capture the VARIABLE `i`, not its value; by call time the loop has left `i = 2`. Fix by binding it: `lambda i=i: i`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**4.**
+
+```python
+def f(n):
+    return f(n - 1)
+f(3)
+```
+
+Most people expect `runs forever, or 0`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `RecursionError: maximum recursion depth exceeded`
+
+Every recursive function needs a base case. Without one Python stops at its recursion limit (~1000 deep) with RecursionError.
+
+</details>
+
+</div>
 
 </script>
 <script type="text/markdown" id="quiz-md">

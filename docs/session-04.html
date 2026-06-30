@@ -39,6 +39,15 @@
     </div>
     <div class="nb-embed" hidden></div>
   </section>
+  <div id="traps" class="md"></div>
+
+  <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-04-traps.ipynb">
+    <div class="nb-slot-bar">
+      <button class="nb-btn nb-primary" type="button" data-nb-embed aria-expanded="false">&#9656; Traps — predict, then run</button>
+      <a class="nb-btn" href="https://colab.research.google.com/github/yangnei/learn-python/blob/main/docs/notebooks/session-04-traps.ipynb" target="_blank" rel="noopener">Open in Colab &#8599;</a>
+    </div>
+    <div class="nb-embed" hidden></div>
+  </section>
 
   <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-04-try.ipynb">
     <div class="nb-slot-bar">
@@ -323,6 +332,91 @@ We learned the fundamentals *underneath* it first.
 ## Summary
 You can load, summarize, and write real research data.
 **Next:** Regular expressions, modules & OOP.
+
+</script>
+<script type="text/markdown" id="traps-md">
+## Traps — predict, then reveal
+Read each snippet and decide what it does **before** you reveal the answer. To run and tinker with them line by line, open **&#9656; Traps — predict, then run** just below.
+
+<div class="trap">
+
+**1.**
+
+```python
+int('3.0')
+```
+
+Most people expect `3`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `ValueError: invalid literal for int() with base 10: '3.0'`
+
+`int()` parses INTEGER text only; '3.0' is not a valid int literal. Use `int(float('3.0'))`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**2.**
+
+```python
+round(2.5)
+```
+
+Most people expect `3`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `2`
+
+Python uses banker's rounding (round half to EVEN): `round(2.5) == 2` but `round(3.5) == 4`. Watch this when summarising data.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**3.**
+
+```python
+0.1 + 0.2 + 0.3 == 0.6
+```
+
+Most people expect `True`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+Float error accumulates when you total measurements: 0.1+0.2+0.3 is 0.6000000000000001. Compare sums with `math.isclose`, or round for display.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**4.**
+
+```python
+int('1_000')
+```
+
+Most people expect `ValueError`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `1000`
+
+Python accepts underscores as digit separators, even inside `int()` text.
+
+</details>
+
+</div>
 
 </script>
 <script type="text/markdown" id="quiz-md">

@@ -39,6 +39,15 @@
     </div>
     <div class="nb-embed" hidden></div>
   </section>
+  <div id="traps" class="md"></div>
+
+  <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-05-traps.ipynb">
+    <div class="nb-slot-bar">
+      <button class="nb-btn nb-primary" type="button" data-nb-embed aria-expanded="false">&#9656; Traps — predict, then run</button>
+      <a class="nb-btn" href="https://colab.research.google.com/github/yangnei/learn-python/blob/main/docs/notebooks/session-05-traps.ipynb" target="_blank" rel="noopener">Open in Colab &#8599;</a>
+    </div>
+    <div class="nb-embed" hidden></div>
+  </section>
 
   <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-05-try.ipynb">
     <div class="nb-slot-bar">
@@ -316,8 +325,8 @@ def gpas(students):
         yield s.gpa          # one value at a time — low memory on big data
 
 g = gpas(roster)
-list(g)   # [3.9, 1.8, ...]
-list(g)   # []  ← a generator is exhausted after one pass
+list(g)   # ?
+list(g)   # ?  ← run it twice — what changes? (Traps below)
 
 if (n := len(roster)) > 30:   # walrus := : assign + test in one step
     print(f"{n} students")
@@ -345,6 +354,132 @@ You can structure code into modules and classes and write idiomatic Python.
 **Next (optional):** the capstone — put it all together.
 
 **Next:** the capstone project.
+
+</script>
+<script type="text/markdown" id="traps-md">
+## Traps — predict, then reveal
+Read each snippet and decide what it does **before** you reveal the answer. To run and tinker with them line by line, open **&#9656; Traps — predict, then run** just below.
+
+<div class="trap">
+
+**1.**
+
+```python
+gen = (n * n for n in range(3))
+first = list(gen)
+list(gen)
+```
+
+Most people expect `[0, 1, 4] again`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `[]`
+
+A generator is one-shot: after the first full pass it is exhausted. Rebuild it, or store a list if you need it twice.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**2.**
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Pt:
+    x: int
+
+p1 = Pt(1)
+p2 = Pt(1)
+p1 == p2
+```
+
+Most people expect `False — two different objects`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `True`
+
+`@dataclass` writes an `__eq__` that compares fields, so equal-valued instances are `==` (even though `p1 is p2` is False).
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**3.**
+
+```python
+import re
+m = re.match(r'<(.+)>', '<a><b>')
+m.group(1)
+```
+
+Most people expect `'a'`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `'a><b'`
+
+`+` is greedy — it grabs as much as it can. Use `+?` for the shortest match: `r'<(.+?)>'`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**4.**
+
+```python
+import re
+bool(re.match(r'\d+', 'abc123'))
+```
+
+Most people expect `True — there are digits`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+`re.match` anchors at the START of the string. Use `re.search` to find a match anywhere.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**5.**
+
+```python
+class Dog:
+    tricks = []
+    def teach(self, t):
+        self.tricks.append(t)
+
+a = Dog()
+b = Dog()
+a.teach('sit')
+b.tricks
+```
+
+Most people expect `[] — b is a different dog`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `['sit']`
+
+`tricks` is a CLASS variable shared by every instance. Give each its own in `__init__`: `self.tricks = []`.
+
+</details>
+
+</div>
 
 </script>
 <script type="text/markdown" id="quiz-md">

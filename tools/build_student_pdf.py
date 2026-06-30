@@ -30,6 +30,24 @@ _bs_spec = importlib.util.spec_from_file_location("bs", ROOT / "tools" / "build_
 _bs = importlib.util.module_from_spec(_bs_spec)
 _bs_spec.loader.exec_module(_bs)
 
+_traps_spec = importlib.util.spec_from_file_location("traps", ROOT / "tools" / "traps.py")
+_traps = importlib.util.module_from_spec(_traps_spec)
+_traps_spec.loader.exec_module(_traps)
+
+
+def pdf_traps(n: int) -> str:
+    """Printed traps reference: code, the common wrong guess, the real result, and why."""
+    entries = _traps.TRAPS.get(n, [])
+    if not entries:
+        return ""
+    out = ["## Traps — predict, then check\n",
+           "Cover the result, predict each one, then check yourself.\n"]
+    for i, t in enumerate(entries, 1):
+        out.append(f"**{i}.**\n\n```python\n{_traps.display_code(t)}\n```\n")
+        out.append(f"Most people expect `{t['expect']}` — the result is `{_traps.reveal(t)}`. "
+                   f"{t['why']}\n")
+    return "\n".join(out)
+
 
 def pdf_practice(heading: str, tasks: str, solution: str) -> str:
     """Practice markdown for the PDF — solutions shown (a printed <details> would hide them)."""
@@ -155,6 +173,9 @@ def render() -> str:
             sections.append(f'<div class="pagebreak"></div>{convert(lesson_b)}')
             if tb:
                 sections.append(convert(pdf_practice("Practice — Part B", tb, sb)))
+        traps_md = pdf_traps(n)
+        if traps_md:
+            sections.append(f'<div class="pagebreak"></div>{convert(traps_md)}')
 
     # Appendices: cheat sheets and quizzes.
     for fname in ("setup-and-tools.md", "traps-and-gotchas.md", "quick-reference.md", "glossary.md"):

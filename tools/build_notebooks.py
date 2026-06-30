@@ -24,6 +24,10 @@ _bs = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_bs)
 SESSIONS = _bs.SESSIONS
 
+_tspec = importlib.util.spec_from_file_location("traps", ROOT / "tools" / "traps.py")
+traps = importlib.util.module_from_spec(_tspec)
+_tspec.loader.exec_module(traps)
+
 # Every session's demo is demo.py.
 DEMO_NAME: dict[int, str] = {}
 
@@ -224,6 +228,24 @@ def build_try(n: int) -> dict:
     return _nb(cells)
 
 
+def build_traps(n: int) -> dict:
+    """Predict-then-run trap lab: each trap is its own runnable cell — run it to reveal."""
+    _counter[0] = 0
+    entries = traps.TRAPS.get(n, [])
+    intro = (f"# Session {n} — Traps: predict, then run\n\n"
+             "Python's dynamic typing has sharp edges. For each cell below: **read it, predict "
+             "the result out loud, then run it with Shift + Enter.** When the answer surprises "
+             "you, that's the cell doing its job — expand *why* and change a value to test your "
+             "new understanding.\n\n" + TIPS)
+    cells = [md(intro)]
+    for i, t in enumerate(entries, 1):
+        cells.append(md(f"### Trap {i} — predict, then run\n\nMany people expect: **{t['expect']}**."))
+        cells.append(code(traps.display_code(t)))
+        cells.append(md(f"<details>\n<summary><strong>What really happens — and why</strong></summary>\n\n"
+                        f"Result: `{traps.reveal(t)}`\n\n{t['why']}\n\n</details>"))
+    return _nb(cells)
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     # Drop the old shared blank sandbox (replaced by per-session try-it notebooks).
@@ -235,12 +257,14 @@ def main() -> None:
             f"session-{n:02d}-a": build_half(n, "A"),
             f"session-{n:02d}-b": build_half(n, "B"),
             f"session-{n:02d}-try": build_try(n),
+            f"session-{n:02d}-traps": build_traps(n),
         }
         for stem, nb in variants.items():
             (OUT / f"{stem}.ipynb").write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n")
             count += 1
     print(f"Wrote {count} notebooks to {OUT.relative_to(ROOT)}/ "
-          f"({len(SESSIONS)} full + {2*len(SESSIONS)} halves + {len(SESSIONS)} try-it)")
+          f"({len(SESSIONS)} full + {2*len(SESSIONS)} halves + {len(SESSIONS)} try-it "
+          f"+ {len(SESSIONS)} traps)")
 
 
 if __name__ == "__main__":

@@ -39,6 +39,15 @@
     </div>
     <div class="nb-embed" hidden></div>
   </section>
+  <div id="traps" class="md"></div>
+
+  <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-01-traps.ipynb">
+    <div class="nb-slot-bar">
+      <button class="nb-btn nb-primary" type="button" data-nb-embed aria-expanded="false">&#9656; Traps — predict, then run</button>
+      <a class="nb-btn" href="https://colab.research.google.com/github/yangnei/learn-python/blob/main/docs/notebooks/session-01-traps.ipynb" target="_blank" rel="noopener">Open in Colab &#8599;</a>
+    </div>
+    <div class="nb-embed" hidden></div>
+  </section>
 
   <section class="nb-slot" data-nb-src="jupyter/notebooks/index.html?path=session-01-try.ipynb">
     <div class="nb-slot-bar">
@@ -204,182 +213,453 @@ You can run code, name values, convert types, format output, and read an error.
 
 ---
 
-## Equality `==` vs Identity `is`
+## A name is just a label
 
-```python
-a = [1, 2]; b = [1, 2]
-a == b      # True   same VALUE
-a is b      # False  different OBJECTS
-c = a
-a is c      # True   same object (alias)
-```
+Python won't lock a name to a type — it can point at an `int` now and a
+`str` later. That freedom is powerful, but it creates **traps** where the
+result contradicts your intuition.
 
-- `==` → "same value?" (almost always what you want)
-- `is` → "same object?" (use only for `None`, `True`, `False`)
+> This half is hands-on. Every rule below has a one-line, runnable trap in
+> **Traps — predict, then run** at the bottom of the page. Predict first,
+> then reveal.
+
+---
+
+## `==` value, `is` identity
+
+- `==` asks "same value?" — almost always what you want.
+- `is` asks "same object?" — use it only for `None` (and `True`/`False`).
+- `b = a` does **not** copy: both names point at one list, so mutating `a`
+  shows through `b`. Copy with `list(a)` or `a[:]`.
 
 🧠 Same GPA = `==`. Same student = `is`.
 
 ---
 
-## Use `is` only for None/True/False
+## Booleans are integers
 
-```python
-if x is None:     # ✅
-if x == None:     # ⚠️ works, not idiomatic
-```
+- `bool` is a *subtype* of `int`, so `True` behaves as `1` and `False` as `0`.
+- That means `5 + True` works, and `sum(flags)` counts how many are `True`.
+- Identity still differs, and `isinstance(True, int)` is true while
+  `type(True) is int` is not.
 
-**Wrinkle (never rely on it):** CPython caches small ints (−5…256), so
-`256 is 256` → True but `257 is 257` may be False. For value, always `==`.
-
----
-
-## Booleans ARE integers
-
-```python
-True == 1                 # True
-False == 0                # True
-5 + True                  # 6
-sum([True, False, True])  # 2   <- counts the Trues
-```
-
-🧠 This is dummy coding (1/0) baked into the language.
-`sum(conditions)` = "how many are true?"
+🧠 Dummy coding (1/0) baked right into the language.
 
 ---
 
-## ...but identity still differs
+## Numbers: int, float, division
 
-```python
-True == 1     # True   (value)
-True is 1     # False  (different objects)
-```
-
-Compare with `==`. `isinstance(True, int)` → `True` (bool is a *subtype* of int).
-
----
-
-## Int vs float
-
-```python
-3 == 3.0      # True   (compared by numeric value)
-7 / 2         # 3.5    / ALWAYS returns a float
-7 // 2        # 3      floor division
--7 // 2       # -4     floors toward -infinity
-```
-
-`4 / 2` is `2.0` (a float!), not `2`.
-
----
-
-## Float precision 😱
-
-```python
-0.1 + 0.2            # 0.30000000000000004
-0.1 + 0.2 == 0.3     # False
-```
-
-Not a bug — decimals stored in **binary** can't all be exact.
-
-```python
-import math
-math.isclose(0.1 + 0.2, 0.3)   # True  ✅
-round(0.1 + 0.2, 2) == 0.3     # True  ✅
-```
-
-🧠 You already never `==` two measured scores. Same instinct, new cause.
+- `/` **always** returns a float (`4 / 2` is `2.0`); `//` floors **toward −∞**.
+- `3 == 3.0` compares by value, but decimals are stored in **binary**, so
+  `0.1 + 0.2` is not exactly `0.3`.
+- Never test two floats with `==` — use `math.isclose(a, b)`. (You already
+  never compare two measured scores for exact equality; same instinct.)
 
 ---
 
 ## Comparing across types
 
-```python
-5 == "5"     # False   (different types, NO error)
-5 == 5.0     # True    (numbers compare by value)
-5 > "5"      # 💥 TypeError: '>' not supported
-```
-
-- `==`/`!=` across types → `False` (never crashes).
-- `<`/`>` across incompatible types → **TypeError**.
-
-🧠 Computer can ask "same?" but can't *rank* text vs numbers — no shared scale.
-
----
-
-## Sequences compare element-by-element
-
-```python
-[1, 2] == [1, 2]    # True
-[1, 2] == (1, 2)    # False  (list vs tuple = different types)
-(1, 2) < (1, 3)     # True   (position by position)
-"apple" < "banana"  # True   (char by char)
-```
-
-A list and a tuple with the same contents are **never equal**.
-
----
-
-## type() vs isinstance()
-
-```python
-isinstance(x, int)            # ✅ Pythonic, respects inheritance
-isinstance(x, (int, float))   # ✅ "any kind of number?"
-type(x) is int                # exact type only
-```
-
-**Gotcha:** `isinstance(True, int)` is `True`.
-To exclude bools: `isinstance(x, int) and not isinstance(x, bool)`.
+- `==` / `!=` across types returns `False` and never crashes.
+- `<` / `>` across incompatible types raises **TypeError** — the computer can
+  ask "same?" but can't *rank* text against numbers.
+- A list and a tuple with the same contents are **never equal**; sequences
+  compare element by element.
 
 ---
 
 ## Truthiness
 
-```python
-# Falsy:  0  0.0  ""  []  {}  set()  None
-# Truthy: everything else — including "0", "False", [0]
-bool("0")   # True!
-bool([0])   # True
-```
-
-Idiom: `if scores:` (not `if len(scores) > 0:`).
-But convert user text first — `"0"` is truthy.
+- Falsy: `0  0.0  ""  []  {}  set()  None`. Truthy: everything else —
+  including `"0"`, `"False"`, and `[0]`.
+- Idiom: `if scores:` rather than `if len(scores) > 0:`.
+- But convert user text first — `"0"` is truthy.
 
 ---
 
-## Predict-then-run gauntlet
+## Now spring the traps
 
-Cover the answers; commit out loud first.
+Open **Traps — predict, then run** below: ~18 one-line traps. For each one,
+**say your prediction out loud, then run it** to reveal the real result and
+the reason behind it.
 
-```python
-True + True            # ?
-3 == 3.0               # ?
-0.1 + 0.2 == 0.3       # ?
-5 == "5"               # ?
-[1,2] == (1,2)         # ?
-bool("0")              # ?
-x=[1]; y=x; x.append(2); y   # ?
-```
-
----
-
-## Your turn
-
-`examples/session-01/practice.md`:
-1. Explain each gauntlet line.
-2. Write `clean_score(value)` that accepts `5`, `5.0`, or `"5"` and returns a float,
-   rejecting nonsense — safely.
-
----
-
-## Traps recap (take the cheat sheet)
-
-- `==` value, `is` identity (only None/True/False).
-- `True == 1`; `sum(bools)` counts.
-- Never `==` floats → `math.isclose`.
-- `5=="5"`→False; `5>"5"`→TypeError.
-- list ≠ tuple even with same contents.
-- `isinstance` over `type`; bools are ints.
+Then in `examples/session-01/practice.md`: write `clean_score(value)` that
+accepts `5`, `5.0`, or `"5"` and returns a float, rejecting nonsense — safely.
 
 **Next:** Control flow & data structures.
+
+</script>
+<script type="text/markdown" id="traps-md">
+## Traps — predict, then reveal
+Read each snippet and decide what it does **before** you reveal the answer. To run and tinker with them line by line, open **&#9656; Traps — predict, then run** just below.
+
+<div class="trap">
+
+**1.**
+
+```python
+a = [1, 2]
+b = [1, 2]
+a is b
+```
+
+Most people expect `True — the lists are equal`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+`==` compares VALUES; `is` compares IDENTITY (the object in memory). Two equal-looking lists are still different objects. Use `==` for values and keep `is` for `None`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**2.**
+
+```python
+a = [1, 2]
+b = a
+a.append(3)
+b
+```
+
+Most people expect `[1, 2] — we only touched a`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `[1, 2, 3]`
+
+`b = a` binds the SAME list, not a copy, so mutating through `a` shows up through `b`. Copy with `list(a)` or `a[:]`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**3.**
+
+```python
+True == 1
+```
+
+Most people expect `False — they are different types`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `True`
+
+`bool` is a subclass of `int`: `True == 1` and `False == 0`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**4.**
+
+```python
+5 + True
+```
+
+Most people expect `TypeError — you can't add a bool to an int`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `6`
+
+`True` acts as `1` (and `False` as `0`) in arithmetic, so `5 + True == 6`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**5.**
+
+```python
+flags = [True, False, True, True]
+sum(flags)
+```
+
+Most people expect `an error, or 0`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `3`
+
+Summing booleans counts the `True`s — a handy way to count how many tests passed.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**6.**
+
+```python
+0.1 + 0.2
+```
+
+Most people expect `0.3`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `0.30000000000000004`
+
+Floats are stored in binary, where 0.1 and 0.2 have no exact representation, so the tiny errors add up.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**7.**
+
+```python
+0.1 + 0.2 == 0.3
+```
+
+Most people expect `True`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+Because `0.1 + 0.2` is `0.30000000000000004`. Never test floats with `==`; use `math.isclose(a, b)`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**8.**
+
+```python
+nan = float('nan')
+nan == nan
+```
+
+Most people expect `True — it is the very same value`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+`NaN` is defined to be equal to nothing, not even itself. Test it with `math.isnan(x)`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**9.**
+
+```python
+7 / 2
+```
+
+Most people expect `3`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `3.5`
+
+`/` is always float (true) division. Use `//` for floor division.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**10.**
+
+```python
+-7 // 2
+```
+
+Most people expect `-3 (chop toward zero)`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `-4`
+
+`//` floors toward negative infinity, not toward zero, so `-7 // 2 == -4`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**11.**
+
+```python
+5 == '5'
+```
+
+Most people expect `True — same digit`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+Python does no automatic number/text conversion, so a number and a string are simply unequal (no error).
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**12.**
+
+```python
+5 > '5'
+```
+
+Most people expect `False (or maybe True)`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `TypeError: '>' not supported between instances of 'int' and 'str'`
+
+Ordering a number against text raises TypeError — there is no sensible order. Convert first: `5 > int('5')`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**13.**
+
+```python
+[1, 2] == (1, 2)
+```
+
+Most people expect `True — same elements`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+A list never equals a tuple, whatever the contents.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**14.**
+
+```python
+type(True) is int
+```
+
+Most people expect `True — bools are ints`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+`type()` is exact and `True`'s type is `bool`, not `int`. Use `isinstance` when you want subclass-aware checks.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**15.**
+
+```python
+isinstance(True, int)
+```
+
+Most people expect `False — it's a bool, not an int`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `True`
+
+`isinstance` respects subclassing, and `bool` IS a kind of `int`.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**16.**
+
+```python
+bool('0')
+```
+
+Most people expect `False — it's zero`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `True`
+
+Any NON-EMPTY string is truthy, including '0' and 'False'. Only the empty string is falsy.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**17.**
+
+```python
+bool([])
+```
+
+Most people expect `True — the list exists`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+Empty containers (`[]`, `{}`, `''`, `0`, `None`) are all falsy.
+
+</details>
+
+</div>
+
+<div class="trap">
+
+**18.**
+
+```python
+m = int('257')
+p = int('257')
+m is p
+```
+
+Most people expect `True — same number`.
+
+<details><summary>Reveal the result</summary>
+
+&rarr; `False`
+
+CPython pre-caches small ints (-5..256), so `is` accidentally looks True there; 257 built at runtime are separate objects. Compare values with `==`, never `is`.
+
+</details>
+
+</div>
 
 </script>
 <script type="text/markdown" id="quiz-md">

@@ -260,8 +260,8 @@ def gpas(students):
         yield s.gpa          # one value at a time — low memory on big data
 
 g = gpas(roster)
-list(g)   # [3.9, 1.8, ...]
-list(g)   # []  ← a generator is exhausted after one pass
+list(g)   # ?
+list(g)   # ?  ← run it twice — what changes? (Traps below)
 
 if (n := len(roster)) > 30:   # walrus := : assign + test in one step
     print(f"{n} students")

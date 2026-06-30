@@ -148,179 +148,76 @@ You can run code, name values, convert types, format output, and read an error.
 
 ---
 
-## Equality `==` vs Identity `is`
+## A name is just a label
 
-```python
-a = [1, 2]; b = [1, 2]
-a == b      # True   same VALUE
-a is b      # False  different OBJECTS
-c = a
-a is c      # True   same object (alias)
-```
+Python won't lock a name to a type — it can point at an `int` now and a
+`str` later. That freedom is powerful, but it creates **traps** where the
+result contradicts your intuition.
 
-- `==` → "same value?" (almost always what you want)
-- `is` → "same object?" (use only for `None`, `True`, `False`)
+> This half is hands-on. Every rule below has a one-line, runnable trap in
+> **Traps — predict, then run** at the bottom of the page. Predict first,
+> then reveal.
+
+---
+
+## `==` value, `is` identity
+
+- `==` asks "same value?" — almost always what you want.
+- `is` asks "same object?" — use it only for `None` (and `True`/`False`).
+- `b = a` does **not** copy: both names point at one list, so mutating `a`
+  shows through `b`. Copy with `list(a)` or `a[:]`.
 
 🧠 Same GPA = `==`. Same student = `is`.
 
 ---
 
-## Use `is` only for None/True/False
+## Booleans are integers
 
-```python
-if x is None:     # ✅
-if x == None:     # ⚠️ works, not idiomatic
-```
+- `bool` is a *subtype* of `int`, so `True` behaves as `1` and `False` as `0`.
+- That means `5 + True` works, and `sum(flags)` counts how many are `True`.
+- Identity still differs, and `isinstance(True, int)` is true while
+  `type(True) is int` is not.
 
-**Wrinkle (never rely on it):** CPython caches small ints (−5…256), so
-`256 is 256` → True but `257 is 257` may be False. For value, always `==`.
-
----
-
-## Booleans ARE integers
-
-```python
-True == 1                 # True
-False == 0                # True
-5 + True                  # 6
-sum([True, False, True])  # 2   <- counts the Trues
-```
-
-🧠 This is dummy coding (1/0) baked into the language.
-`sum(conditions)` = "how many are true?"
+🧠 Dummy coding (1/0) baked right into the language.
 
 ---
 
-## ...but identity still differs
+## Numbers: int, float, division
 
-```python
-True == 1     # True   (value)
-True is 1     # False  (different objects)
-```
-
-Compare with `==`. `isinstance(True, int)` → `True` (bool is a *subtype* of int).
-
----
-
-## Int vs float
-
-```python
-3 == 3.0      # True   (compared by numeric value)
-7 / 2         # 3.5    / ALWAYS returns a float
-7 // 2        # 3      floor division
--7 // 2       # -4     floors toward -infinity
-```
-
-`4 / 2` is `2.0` (a float!), not `2`.
-
----
-
-## Float precision 😱
-
-```python
-0.1 + 0.2            # 0.30000000000000004
-0.1 + 0.2 == 0.3     # False
-```
-
-Not a bug — decimals stored in **binary** can't all be exact.
-
-```python
-import math
-math.isclose(0.1 + 0.2, 0.3)   # True  ✅
-round(0.1 + 0.2, 2) == 0.3     # True  ✅
-```
-
-🧠 You already never `==` two measured scores. Same instinct, new cause.
+- `/` **always** returns a float (`4 / 2` is `2.0`); `//` floors **toward −∞**.
+- `3 == 3.0` compares by value, but decimals are stored in **binary**, so
+  `0.1 + 0.2` is not exactly `0.3`.
+- Never test two floats with `==` — use `math.isclose(a, b)`. (You already
+  never compare two measured scores for exact equality; same instinct.)
 
 ---
 
 ## Comparing across types
 
-```python
-5 == "5"     # False   (different types, NO error)
-5 == 5.0     # True    (numbers compare by value)
-5 > "5"      # 💥 TypeError: '>' not supported
-```
-
-- `==`/`!=` across types → `False` (never crashes).
-- `<`/`>` across incompatible types → **TypeError**.
-
-🧠 Computer can ask "same?" but can't *rank* text vs numbers — no shared scale.
-
----
-
-## Sequences compare element-by-element
-
-```python
-[1, 2] == [1, 2]    # True
-[1, 2] == (1, 2)    # False  (list vs tuple = different types)
-(1, 2) < (1, 3)     # True   (position by position)
-"apple" < "banana"  # True   (char by char)
-```
-
-A list and a tuple with the same contents are **never equal**.
-
----
-
-## type() vs isinstance()
-
-```python
-isinstance(x, int)            # ✅ Pythonic, respects inheritance
-isinstance(x, (int, float))   # ✅ "any kind of number?"
-type(x) is int                # exact type only
-```
-
-**Gotcha:** `isinstance(True, int)` is `True`.
-To exclude bools: `isinstance(x, int) and not isinstance(x, bool)`.
+- `==` / `!=` across types returns `False` and never crashes.
+- `<` / `>` across incompatible types raises **TypeError** — the computer can
+  ask "same?" but can't *rank* text against numbers.
+- A list and a tuple with the same contents are **never equal**; sequences
+  compare element by element.
 
 ---
 
 ## Truthiness
 
-```python
-# Falsy:  0  0.0  ""  []  {}  set()  None
-# Truthy: everything else — including "0", "False", [0]
-bool("0")   # True!
-bool([0])   # True
-```
-
-Idiom: `if scores:` (not `if len(scores) > 0:`).
-But convert user text first — `"0"` is truthy.
+- Falsy: `0  0.0  ""  []  {}  set()  None`. Truthy: everything else —
+  including `"0"`, `"False"`, and `[0]`.
+- Idiom: `if scores:` rather than `if len(scores) > 0:`.
+- But convert user text first — `"0"` is truthy.
 
 ---
 
-## Predict-then-run gauntlet
+## Now spring the traps
 
-Cover the answers; commit out loud first.
+Open **Traps — predict, then run** below: ~18 one-line traps. For each one,
+**say your prediction out loud, then run it** to reveal the real result and
+the reason behind it.
 
-```python
-True + True            # ?
-3 == 3.0               # ?
-0.1 + 0.2 == 0.3       # ?
-5 == "5"               # ?
-[1,2] == (1,2)         # ?
-bool("0")              # ?
-x=[1]; y=x; x.append(2); y   # ?
-```
-
----
-
-## Your turn
-
-`examples/session-01/practice.md`:
-1. Explain each gauntlet line.
-2. Write `clean_score(value)` that accepts `5`, `5.0`, or `"5"` and returns a float,
-   rejecting nonsense — safely.
-
----
-
-## Traps recap (take the cheat sheet)
-
-- `==` value, `is` identity (only None/True/False).
-- `True == 1`; `sum(bools)` counts.
-- Never `==` floats → `math.isclose`.
-- `5=="5"`→False; `5>"5"`→TypeError.
-- list ≠ tuple even with same contents.
-- `isinstance` over `type`; bools are ints.
+Then in `examples/session-01/practice.md`: write `clean_score(value)` that
+accepts `5`, `5.0`, or `"5"` and returns a float, rejecting nonsense — safely.
 
 **Next:** Control flow & data structures.

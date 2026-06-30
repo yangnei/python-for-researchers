@@ -11,12 +11,18 @@ Run:  python3 tools/build_site.py
 """
 from __future__ import annotations
 import html
+import importlib.util
 import json
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
+
+# Shared "predict, then reveal" trap dataset (also used by the notebooks and PDF).
+_traps_spec = importlib.util.spec_from_file_location("traps", Path(__file__).resolve().parent / "traps.py")
+traps = importlib.util.module_from_spec(_traps_spec)
+_traps_spec.loader.exec_module(traps)
 
 SESSIONS = [
     (1, "Running Python, Types & the Type Traps",
@@ -551,17 +557,38 @@ def practice_part_md(heading: str, tasks: str, solution: str) -> str:
     return out
 
 
+def traps_section_md(n: int) -> str:
+    """De-spoilered page traps: code + the common (wrong) guess + a click-to-reveal result."""
+    entries = traps.TRAPS.get(n, [])
+    if not entries:
+        return ""
+    out = ["## Traps — predict, then reveal",
+           "Read each snippet and decide what it does **before** you reveal the answer. "
+           "To run and tinker with them line by line, open **&#9656; Traps — predict, then run** "
+           "just below.\n"]
+    for i, t in enumerate(entries, 1):
+        out.append(f'<div class="trap">\n\n**{i}.**\n\n```python\n{traps.display_code(t)}\n```\n')
+        out.append(f"Most people expect `{t['expect']}`.\n")
+        out.append("<details><summary>Reveal the result</summary>\n\n"
+                   f"&rarr; `{traps.reveal(t)}`\n\n{t['why']}\n\n</details>\n\n</div>\n")
+    return "\n".join(out)
+
+
 def build_session(n: int, title: str, slides_dir: Path, examples_dir: Path, quizzes_text: str) -> str:
     lesson_a, lesson_b = split_lesson(strip_frontmatter((slides_dir / f"session-{n:02d}-slides.md").read_text()))
     quiz = session_quiz_md(quizzes_text, n)
     quiz_block = (f'<h2>Check yourself</h2>\n<div id="quiz" class="md"></div>' if quiz else "")
     stem = f"session-{n:02d}"
 
-    # The practice for each half (and the open scratch) lives in embedded, runnable
-    # notebooks rather than on the page: three lazy-loaded JupyterLite slots.
+    # The practice for each half, the trap lab, and the open scratch all live in embedded,
+    # runnable notebooks rather than on the page: lazy-loaded JupyterLite slots.
     slot_a = embed_slot("Practice — Part A", lite_for(f"{stem}-a"), colab_for(f"{stem}-a"))
     slot_b = embed_slot("Practice — Part B", lite_for(f"{stem}-b"), colab_for(f"{stem}-b"))
+    slot_traps = embed_slot("Traps — predict, then run", lite_for(f"{stem}-traps"), colab_for(f"{stem}-traps"))
     slot_try = embed_slot("Try it yourself", lite_for(f"{stem}-try"), colab_for(f"{stem}-try"))
+
+    traps_md = traps_section_md(n)
+    traps_html = ('  <div id="traps" class="md"></div>\n' + f'{slot_traps}\n') if traps_md else ""
 
     if lesson_b:   # the normal case: two interleaved halves
         lesson_html = (
@@ -569,13 +596,17 @@ def build_session(n: int, title: str, slides_dir: Path, examples_dir: Path, quiz
             f'{slot_a}\n'
             '  <div id="lesson-b" class="md"></div>\n'
             f'{slot_b}\n'
+            f'{traps_html}'
             f'{slot_try}')
         md_blocks = [md_script("lesson-a-md", lesson_a),
                      md_script("lesson-b-md", lesson_b)]
     else:          # fallback: single lesson, both practice notebooks after it
         lesson_html = ('  <div id="lesson-a" class="md"></div>\n'
-                       f'{slot_a}\n{slot_b}\n{slot_try}')
+                       f'{slot_a}\n{slot_b}\n{traps_html}{slot_try}')
         md_blocks = [md_script("lesson-a-md", lesson_a)]
+
+    if traps_md:
+        md_blocks.append(md_script("traps-md", traps_md))
 
     body = f"""
 <article>
